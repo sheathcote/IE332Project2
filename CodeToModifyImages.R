@@ -3,6 +3,7 @@ library(tidyverse)
 library(keras)
 library(tensorflow)
 library(reticulate)
+library(jpeg)
 
 install_tensorflow(extra_packages="pillow")
 install_keras()
