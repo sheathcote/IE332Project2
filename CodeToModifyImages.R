@@ -137,3 +137,4 @@ for (i in f){
   pred <- model %>% predict(x)
   print(pred)
 }
+
