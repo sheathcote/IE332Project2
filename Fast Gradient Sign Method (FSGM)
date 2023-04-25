@@ -1,6 +1,7 @@
 
 # Define the FGSM attack function
-fgsm_attack <- function(image, model, epsilon) {
+fgsm_attack <- function(image, model, epsilon) 
+{
   # Convert the image to an array and add an extra dimension (batch size of 1)
   image_array <- array_reshape(image, c(1, dim(image)))
   
@@ -10,8 +11,7 @@ fgsm_attack <- function(image, model, epsilon) {
   
   # The gradient is the rate of change of the loss function with respect to the input image
   # Create a TensorFlow gradient tape to record operations for automatic differentiation
-  # Records Operations for Automatic Differentiation
-  # Automatic Differentiation computes the gradient/derivative of a function with respect to its input images
+  # Automatic Differentiation calculates the gradient/derivative of a function with respect to its input images
   tape <- tf$GradientTape()
   
   # Wrap operations inside the gradient tape context
