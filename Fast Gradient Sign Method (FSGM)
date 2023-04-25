@@ -1,0 +1,65 @@
+# FGSM Attack function
+fgsm_attack <- function(image, model, epsilon)
+
+{
+  # Convert the input image to a tensor and reshape it to match the model's input dimensions
+  # This step prepares the image for processing by the pre-trained model
+  image_tensor <- array_reshape(tensor(image, dtype = "float32"), c(1, dim(image)))
+  
+  # Normalize the image tensor to a range from 0 to 1
+  # The model expects input values to be in this range, so this step ensures compatibility
+  image_tensor <- image_tensor / 255
+  
+  # Create a tensor variable for the image tensor
+  # This allows us to track the gradients of the loss with respect to the input image
+  image_var <- k_variable(image_tensor)
+  
+  # Calculate the gradient of the loss with respect to the input image. Gradient refers to how the model's prediction changes for different input images, basically the basis of FGSM
+  # We can use TensorFlow's GradientTape to record operations for automatic differentiation (technique used to find gradient/derivative/rate of change with regards to the model and its input images)
+  with(tf$GradientTape() %as% tape,
+  {
+    # Tell the tape to watch the input image variable for gradient calculation
+    tape$watch(image_var)
+    
+    # Get the model's prediction for the input image
+    prediction <- model(image_var)
+    
+    # Determine the true label based on the model's prediction
+    label <- k_argmax(prediction, axis = -1)
+    
+    # Calculate the loss between the true label and the model's prediction
+    # This loss indicates how well the model is performing on the input image
+    loss <- k_sparse_categorical_crossentropy(label, prediction)
+  }
+  
+  # Get the gradient of the loss with respect to the input image
+  # This gradient indicates how the model's output changes with small changes in the input image
+  gradient <- tape$gradient(loss, image_var)
+  
+  # Calculate the sign of the gradient
+  # The sign function returns -1 for negative values, 0 for zero, and 1 for positive values
+  # This step captures the direction of the gradient while ignoring its magnitude
+  signed_grad <- k_sign(gradient)
+  
+  # Generate the adversarial image using the signed gradient and epsilon
+  # By adding the signed gradient multiplied by epsilon to the input image, we create
+  # small changes that are designed to maximize the model's loss for the true label. This is to trick the classifier while still being imperceptible to the human eye.
+  adversarial_image <- image_var + epsilon * signed_grad
+  
+  # Clip the adversarial image to a range from 0 to 1.
+  # This step ensures that the resulting adversarial image has valid pixel values
+  adversarial_image <- k_clip(adversarial_image, 0, 1)
+  
+  # Convert the adversarial image tensor to an array
+  # This allows us to return the image in a format compatible with the input image
+  adversarial_image_array <- as.array(adversarial_image)
+  
+  # Reshape the adversarial image array to match the original image dimensions
+  adversarial_image_array <- array_reshape(adversarial_image_array, dim(image))
+  
+  # Unnormalize the adversarial image array (multiply by 255).
+  # This step converts the pixel values back to their original range of [0, 255]
+  adversarial_image_array <- adversarial_image_array * 255
+  
+  return(adversarial_image_array)
+}
