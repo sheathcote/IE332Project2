@@ -1,66 +1,140 @@
 
-# Define the FGSM attack function
-fgsm_attack <- function(image, model, epsilon) 
-{
-  # Convert the image to an array and add an extra dimension (batch size of 1)
-  image_array <- array_reshape(image, c(1, dim(image)))
-  
-  # Normalize the image data by dividing by 255
-  image_array <- image_array / 255
-  
-  # The gradient is the rate of change of the loss function with respect to the input image
-  # Create a TensorFlow gradient tape to record operations for automatic differentiation
-  # Automatic Differentiation calculates the gradient/derivative of a function with respect to its input images
-  tape <- tf$GradientTape()
-  
-  # Wrap operations inside the gradient tape context
-  with(tape, {
-    # Set the image as a watched variable for gradient calculation
-    tape$watch(image_array)
-    
-    # Get the model prediction for the image
-    prediction <- model %>% predict(image_array)
-    
-    # Calculate the loss using the true label
-    # CategoricalCrossentropy calculates the difference between the predicted probability distribution and the true probability distribution. 
-    # Lower cross-entropy loss means better predictions.
-    loss <- tf$keras$losses$CategoricalCrossentropy()(image_array, prediction)
-  })
-  
-  # Get the gradient of the loss with respect to the input image
-  # The gradient is the rate of change of the loss function with respect to the input image
-  gradient <- tape$gradient(loss, image_array)
-  
-  # Calculate the sign of the gradient (important because it gives the "direction" of how the pixels are modified in order to fool the classifier)
-  signed_grad <- tf$sign(gradient)
-  
-  # Generate the adversarial image using the signed gradient and epsilon
-  # Epsilon is a small scalar value that controls the magnitude of the changes added to the input image
-  adversarial_image <- image_array + epsilon * signed_grad
-  
-  # Clip the adversarial image to keep the pixel values in the valid range (0 to 1)
-  adversarial_image <- tf$clip_by_value(adversarial_image, 0, 1)
-  
-  # Convert back to the original pixel value range (0 to 255)
-  return(adversarial_image * 255)  
+#install packages
+library(tidyverse)
+library(keras)
+library(tensorflow)
+library(reticulate)
+library(jpeg)
+
+install_tensorflow(extra_packages="pillow")
+install_keras()
+
+#set working directory to wherever you saved the project files
+setwd("C:/Users/rajes/Downloads")
+getwd()
+
+#code to load model
+model <- load_model_tf("./dandelion_model")
+summary(model)
+
+#function that makes modifies images
+random <- function (x, P) {
+  x_size <- length(x[,1,1])
+  y_size <- length(x[1,,1])
+  for (i in 1:x_size) {
+    for (j in 1:y_size) {
+      if ((((j-1) * x_size) + i) %% P == 0) {  
+        x[i,j,1] <- 1 #modifies red value
+        x[i,j,2] <- 1 #modifies green value
+        x[i,j,3] <- 0 #modifies blue value
+      }
+    }
+  }
+  writeJPEG(x, "./grass/modified_grass.jpg")
+  modified_image <- jpeg::readJPEG("./grass/modified_grass.jpg")
+  graphics::plot(1, type="n", xlim=c(0, 1), ylim=c(0, 1), xlab="", ylab="")
+  graphics::rasterImage(modified_image, 0, 0, 1, 1)
 }
 
-#Now test this FGSM algorithm meant to fool classifier on main algorithm 
+# Function to perform an FGSM attack
+fgsm_attack <- function(image, epsilon, model, target_label) {
+  sess <- tensorflow::tf$Session()
+  input_ph <- tensorflow::tf$placeholder("float", shape(image))
+  logits <- model(input_ph)[[1]]
+  loss <- tensorflow::tf$nn$sparse_softmax_cross_entropy_with_logits(
+    labels = tensorflow::tf$constant(target_label, dtype="int32", shape=c(1)),
+    logits = logits
+  )
+  grads <- tensorflow::tf$gradients(loss, input_ph)[[1]]
+  feed_dict <- dict(input_ph = image)
+  grads_value <- sess$run(grads, feed_dict=feed_dict)
+  adversarial_image <- image + epsilon * sign(grads_value)
+  adversarial_image <- pmax(pmin(adversarial_image, 1), 0)
+  return(adversarial_image)
+}
 
-# Load the pre-trained image classification model
-model <- load_model_tf("./dandelion_model")
-
-# Load and preprocess the input image
+#testing
 target_size <- c(224, 224)
-input_image <- image_load("./grass/modified_grass.jpg", target_size = target_size)
-input_array <- image_to_array(input_image)
 
-# Define the epsilon value for the FGSM attack
-epsilon <- 0.01
+res=c("","")
+f=list.files("./grass")
+for (i in f){
+  test_image <- image_load(paste("./grass/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- x/255
+  
+  #change the image
+  P <- 5
+  random(x, P)
+  
+  #load the new image - point to where you saved the modified image
+  epsilon <- 0.01
+  target_label <- 0
+  adversarial_image <- fgsm_attack(x, epsilon, model, target_label)
+  image_save(array_to_image(adversarial_image), "./grass/modified_grass.jpg")
+  new_img <- image_load("./grass/modified_grass.jpg",
+                        target_size = target_size)
+  new <- image_to_array(new_img)
+  new <- array_reshape(new, c(1, dim(new)))
+  
+  pred <- model %>% predict(new)
+  print(pred)
+}
 
-# Perform the FGSM attack to generate an adversarial image
-adversarial_array <- fgsm_attack(input_array, model, epsilon)
+res=c("","")
+f=list.files("./dandelions")
+for (i in f){
+  test_image <- image_load(paste("./dandelions/",i,sep=""),                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- x/255
+  
+  #change the image
+  P <- 5
+  random(x, P)
+  
+  #load the new image - point to where you saved the modified image
+  epsilon <- 0.01
+  target_label <- 1
+  adversarial_image <- fgsm_attack(x, epsilon, model, target_label)
+  image_save(array_to_image(adversarial_image), "./dandelions/modified_dandelion.jpg")
+  new_img <- image_load("./dandelions/modified_dandelion.jpg",
+                        target_size = target_size)
+  new <- image_to_array(new_img)
+  new <- array_reshape(new, c(1, dim(new)))
+  
+  pred <- model %>% predict(new)
+  print(pred)
+}
 
-# Save the adversarial image
-writeJPEG(adversarial_array, "./grass/modified_grass.jpg")
+#code to run model without changing an image
+res=c("","")
+f=list.files("./grass")
+print(f)
+
+for (i in f){
+  test_image <- image_load(paste("./grass/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- array_reshape(x, c(1, dim(x)))
+  x <- x/255
+  
+  pred <- model %>% predict(x)
+  print(pred)
+}
+
+res=c("","")
+f=list.files("./dandelions")
+print(f)
+
+for (i in f){
+  test_image <- image_load(paste("./dandelions/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- array_reshape(x, c(1, dim(x)))
+  x <- x/255
+  
+  pred <- model %>% predict(x)
+  print(pred)
+}
 
