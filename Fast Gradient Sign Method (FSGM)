@@ -5,9 +5,6 @@ library(tensorflow)
 library(reticulate)
 library(jpeg)
 
-install_tensorflow(extra_packages="pillow")
-install_keras()
-
 #set working directory to wherever you saved the project files
 setwd("C:/Users/rajes/Downloads")
 getwd()
