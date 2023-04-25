@@ -6,9 +6,12 @@ fgsm_attack <- function(image, model, epsilon) {
   
   # Normalize the image data by dividing by 255
   image_array <- image_array / 255
-
+  
+  
+  # The gradient is the rate of change of the loss function with respect to the input image
   # Create a TensorFlow gradient tape to record operations for automatic differentiation
-  # Automatic differentiation computes the derivative of a function using the chain rule
+  # Records Operations for Automatic Differentiation
+  # Automatic Differentiation computes the gradient/derivative of a function with respect to its input images
   tape <- tf$GradientTape()
   
   # Wrap operations inside the gradient tape context
