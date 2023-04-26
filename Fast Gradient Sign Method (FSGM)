@@ -63,6 +63,8 @@ fgsm_perturbation <- function(image, model, epsilon, target_label) {
   return(perturbation)
 }
 
+
+
 #testing
 target_size <- c(224, 224)
 
@@ -85,6 +87,10 @@ for (i in f){
   pred <- model %>% predict(array_reshape(perturbed_image, c(1, 224, 224, 3)))
   print(pred)
 }
+
+
+
+
 
 # Dandelion images
 res=c("","")
