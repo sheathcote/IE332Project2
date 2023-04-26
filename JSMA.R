@@ -35,10 +35,11 @@ jacobian_matrix <- function(y, x, n_class){
 
 #Implementation of JSMA method to generate adversarial images.
 jsma <- function(X_adv, target_y, model, eps, cmin=0.0, cmax=1.0) {
-
+  
   # Reshape the input
-  X_adv <- tf$constant(X_adv, dtype=tf$float32)
-  X_adv <- tf$reshape(X_adv, shape=c(-1, 28, 28, 1))
+  # Reshape the input
+  X_adv <- tf$convert_to_tensor(X_adv, dtype=tf$float32)
+  X_adv <- tf$reshape(X_adv, shape=as.integer(c(224, 224, 3)))
   
   # Get the logits and probabilities
   logits_probs <- model(X_adv)
@@ -47,40 +48,44 @@ jsma <- function(X_adv, target_y, model, eps, cmin=0.0, cmax=1.0) {
   
   # Get model prediction for inputs.
   y_ind = tf.argmax(probs[0])
-
+  
   # Calculate jacobian matrix of logits wrt to input.
   jacobian <- jacobian_matrix(tf$reshape(logits, shape=c(-1)), X_adv, 10)
-
+  
   # Get the gradient of logits wrt to prediction and target.
   grad_input <- jacobian[y_ind]
   grad_target <- jacobian[target_y]
   grad_other = grad_input - grad_target
-
+  
   # Compute saliency score for each dimension.
   score <- saliency_map(X_adv, grad_target, grad_other, eps, cmin, cmax)
-
+  
   # Select dimension of input and apply epsilon value.
   idx = tf.argmax(score, axis=1)
-  pert = tf.one_hot(idx, 784, on_value=eps, off_value=0.0)
+  pert = tf.one_hot_v2(idx, 784, on_value=eps, off_value=0.0, dtype=tf$float32)
   pert = tf.reshape(pert, shape=tf.shape(X_adv))
-
+  
   X_adv = tf.clip_by_value(X_adv + pert, cmin, cmax)
-
+  
   return (X_adv, pert)
 }
-  
+
 #Run JSMA on input image for `epochs` number of times.
 generate_jsma <- function(model, X, target, eps=1.0, epochs=50) {
   
   tf$random$set_seed(42)
   
   # Placeholder for single image.
-  X_p <- tf$placeholder(shape=c(28, 28, 1), dtype=tf$float32)
+  a <- integer(3)
+  a[1] <- as.integer(224)
+  a[2] <- as.integer(224)
+  a[3] <- as.integer(1)
+  X_p <- tf$keras$backend$placeholder(shape=a, dtype=tf$float32)
   
   # Op for one iteration of jsma.
   adv_op <- jsma(X_p, target_y=target, model=model, eps=eps)
   
-  digit <- array(X, dim=c(28, 28, 1))
+  digit <- array(X, dim=c(224, 224, 3))
   
   sess <- tf$Session()
   with(sess, {
@@ -94,7 +99,7 @@ generate_jsma <- function(model, X, target, eps=1.0, epochs=50) {
   
   pert <- digit - X
   
-  return(list(digit = array_reshape(digit, shape=c(28, 28)), pert = array_reshape(pert, shape=c(28, 28))))
+  return(list(digit = array_reshape(digit, shape=c(as.integer(28), as.integer(28))), pert = array_reshape(pert, shape=c(28, 28))))
 }
 
 setwd("C:/Users/sheat/OneDrive/Documents/IE332Project/Project2")
