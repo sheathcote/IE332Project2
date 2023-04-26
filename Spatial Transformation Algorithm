@@ -1,0 +1,104 @@
+#install packages
+library(tidyverse)
+library(keras)
+library(tensorflow)
+library(reticulate)
+library(jpeg)
+library(magick)
+
+#set working directory to wherever you saved the project files
+setwd("C:/Users/rajes/Downloads")
+getwd()
+
+#code to load model
+model <- load_model_tf("./dandelion_model")
+summary(model)
+
+# Spatial Transformation Attack function
+spatial_transformation_attack <- function(image, model, num_trials, target_label) {
+  best_confidence <- 0
+  best_image <- image
+  
+  for (trial in 1:num_trials) {
+    # Create a copy of the original image
+    modified_image <- image
+    
+    # Generate random affine transformation parameters
+    rotation_angle <- runif(1, -15, 15)
+    translation_x <- runif(1, -15, 15)
+    translation_y <- runif(1, -15, 15)
+    scaling_x <- runif(1, 0.9, 1.1)
+    scaling_y <- runif(1, 0.9, 1.1)
+    shear_angle <- runif(1, -15, 15)
+    
+    # Convert array to magick image
+    modified_image <- array_reshape(modified_image * 255, c(224, 224, 3))
+    tmpfile <- tempfile(fileext = ".jpg")
+    writeJPEG(modified_image, tmpfile)
+    modified_image <- magick::image_read(tmpfile)
+    
+    # Apply affine transformations
+    modified_image <- modified_image %>%
+      magick::image_scale(sprintf("%fx%f!", scaling_x * 224, scaling_y * 224)) %>%
+      magick::image_rotate(rotation_angle) %>%
+      magick::image_crop(sprintf("224x224%+d%+d", as.integer(translation_x), as.integer(translation_y))) %>%
+      magick::image_shear(sprintf("%dx%d", as.integer(shear_angle), 0))
+    
+    # Convert magick image to array
+    modified_image_data <- magick::image_data(modified_image)
+    modified_image_array <- array(as.numeric(unlist(modified_image_data)), dim = c(224, 224, 3))
+    modified_image <- modified_image_array / 255
+    
+    
+    # Normalize the modified image
+    modified_image <- modified_image / 255
+    modified_image <- array_reshape(modified_image, c(224, 224, 3))
+    
+    # Predict using the transformed image
+    pred <- model %>% predict(array_reshape(modified_image, c(1, 224, 224, 3)))
+    confidence <- pred[1, target_label + 1]
+    
+    # Update the best perturbed image if the confidence is higher
+    if (confidence > best_confidence) {
+      best_confidence <- confidence
+      best_image <- modified_image
+    }
+  }
+  
+  return(best_image)
+}
+
+
+
+#testing
+target_size <- c(224, 224)
+
+# Grass images
+f=list.files("./grass")
+for (i in f){
+  test_image <- image_load(paste("./grass/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- x/255
+  
+  target_label <- 1 # Target label for dandelion
+  transformed_image <- spatial_transformation_attack(x, model, 1000, target_label)
+  
+  pred <- model %>% predict(array_reshape(transformed_image, c(1, 224, 224, 3)))
+  print(pred)
+}
+
+# Dandelion images
+f=list.files("./dandelions")
+for (i in f){
+  test_image <- image_load(paste("./dandelions/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- x/255
+  
+  target_label <- 0 # Target label for grass
+  transformed_image <- spatial_transformation_attack(x, model, 1000, target_label)
+  
+  pred <- model %>% predict(array_reshape(transformed_image, c(1, 224, 224, 3)))
+  print(pred)
+}
