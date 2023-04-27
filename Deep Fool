@@ -5,19 +5,19 @@ library(jpeg)
 
 model <- mx.model.load('model-symbol.json', 'model-0000.params', ctx = mx.cpu(), type = "mxnet")
 
-img <- mx.nd.array(cv2_imread("image.jpg") %>% cv2.cvtColor(cv2.COLOR_BGR2RGB)) # replace with your image path
+img <- mx.nd.array(cv2_imread("image.jpg") %>% cv2.cvtColor(cv2.COLOR_BGR2RGB))
 
 max_iter <- 100
 
-epsilon <- 0.02
+epsilon <- 0.3
 
 min_dist <- 0.1
 
-# Define the number of classes
+#number of classes
 num_classes <- 2
 
 get_gradient <- function(img, label){
-  # Set the gradient accumulators to zero
+  #gradient accumulators zero
   grad <- mx.nd.zeros(dim = dim(img), ctx = mx.cpu())
   label_onehot <- mx.nd.one_hot(mx.nd.array(label), num_classes)
   # Forward pass
@@ -41,46 +41,46 @@ deep_fool <- function(img, label, max_iter, epsilon, min_dist){
   
   grad_orig <- get_gradient(x, label)
   
-  # Get the predicted class label of the original image
+
   y <- model(x)$as.numeric()
   
-  # Set the minimum distance to infinity
+ 
   pert_min <- Inf
   
-  # Loop until the maximum number of iterations is reached or the minimum distance is less than the threshold
+ 
   while(iter < max_iter && pert_min > min_dist)
   {
    
-   # Set the current minimum distance to infinity
+  
     pert_min_curr <- Inf
     
-    # Loop over all classes except for the predicted class label
+   
     for(k in setdiff(seq_len(num_classes), y))
     {
-      # Calculate the gradient of the image with respect to the current class label
+      # Calculating the gradient of the image with respect to the current class label
       grad_k <- get_gradient(x, k)
       
-      # Calculate the difference between the gradient of the current class label and the gradient of the predicted class label
+      # Calculating the difference between the gradient of the current class label and the gradient of the predicted class label
       w_k <- grad_k - grad_orig
       
-      # Calculate the L2 norm of the difference
+      # Calculating the L2 norm of the difference
       norm_w_k <- mx.nd.norm(w_k, ord = 2) %>% as.numeric()
       
-      # Calculate the perturbation vector
+      # Calculating the perturbation vector
       pert_k <- (epsilon * w_k / norm_w_k)
       
-      # Calculate the L2 norm of the perturbation vector
+      # Calculating the L2 norm of the perturbation vector
       pert_norm_k <- mx.nd.norm(pert_k, ord = 2) %>% as.numeric()
       
-      # If the L2 norm of the perturbation vector is smaller than the current minimum distance, update the minimum distance
+      
       if(pert_norm_k < pert_min_curr)
       {
         pert_min_curr <- pert_norm_k
         pert_k_min <- pert_k
       }
     }
-    # Add the vector of the current iteration to the image
+  
     x <- x + pert_k_min
-    # Clip the image to the valid range [0, 1]
+    # Clipping the image to the valid range [0, 1]
     }
    
