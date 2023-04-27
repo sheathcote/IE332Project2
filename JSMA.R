@@ -99,7 +99,7 @@ generate_jsma <- function(model, X, target, eps=1.0, epochs=50) {
   
   pert <- digit - X
   
-  return(list(digit = array_reshape(digit, shape=c(as.integer(28), as.integer(28))), pert = array_reshape(pert, shape=c(28, 28))))
+  return(list(digit = array_reshape(digit, shape=c(as.integer(224), as.integer(224))), pert = array_reshape(pert, shape=c(224, 224))))
 }
 
 setwd("C:/Users/sheat/OneDrive/Documents/IE332Project/Project2")
