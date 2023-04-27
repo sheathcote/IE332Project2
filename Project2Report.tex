@@ -75,16 +75,16 @@ Accountable together -- we are Purdue.''}
   \begin{center}
     \label{tab:table1}
     \begin{tabular}{c|ccccc|c|c}
-      Student & Algorithms & Q2 & Q3 & Q4 & Report & Overall & DIFF\\
+      Student & Algorithms & IDK & What should & Go Here & Report & Overall & DIFF\\
       \hline
-      Alec F & 10 & 35 & 10 & 10 & 10 & 75 & -25\\
-      Dhruv G & 10 & 35 & 10 & 10 & 60 & 125 & 25\\
-      Glen T & 10 & 10 & 60 & 60 & 10 & 150 & 50\\
-      Sami H & 35 & 10 & 10 & 10 & 10 & 75 & -25\\
-      Varun R & 35 & 10 & 10 & 10 & 10 & 75 & -25\\
+      Alec F & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+      Dhruv G & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+      Glen T & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+      Sami H & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+      Varun R & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
       
       \hline
-      St Dev & 14 & 14 & 22 & 22 & 22 & 35 & 35
+      St Dev & 0 & 0 & 0 & 0 & 0 & 0 & 0
     \end{tabular}
   \end{center}
 \end{table}
@@ -151,15 +151,72 @@ Accountable together -- we are Purdue.''}
 \newpage
 \section{Main Text}
 \subsection{Introduction}
-\subsection{Jacobian-based Saliency Map Attack}
+\paragraph{As the world moves toward more reliance on AI and robotics, it is important that we understand how adversarial attacks can be used to fool machine learning tools, such as image classifiers. Understanding and being able to stop adversarial attacks could have a large impact on the future, especially in situations such as autonomous driving, where the consequences of classifying a stop sign incorrectly could be death (Hui, 2020).}
+
+\subsection{Jacobian-based Saliency Map Attack (JSMA)}
+\paragraph{The Jacobian-based Saliency Map Attack is a greedy algorithm that changes one pixel at a time over many iterations until the modified picture can fool the image classifier model into mislabeling it. This algorithm takes in an image, a model used to classify the images, a target label, and a maximum number of changes. It then iteratively calls a JSMA function that uses a saliency map to decide what pixel to change next. A saliency map is created by computing the change in the logit score of the target label for each pixel. Then, the pixel with the largest change to the logit score is chosen and changed. This is repeated until the image is able to fool the image classifier or the maximum number of changes is reached. (Dahal, 2019)}
+\paragraph{This type of attack is a good fit for our project because we have a limited budget of pixels, so an algorithm that changes one pixel at a time would be easy to stop when it reaches the pixel budget. Furthermore, since this function takes in a maximum number of changes variable, we can easily modify this variable to be the chosen pixel budget. In adition to being easy to limit the number of changes made by this algorithm, since this algorithm focuses on changing pixels that have the largest effect on the logit score of the target label, the algorithm should still be somewhat effective when the pixel allowance is small.}
+
+\subsection{Fast Gradient Signed Method Attack}
+\paragraph{ 
+The FGSM algorithm begins by loading the necessary libraries, then loading the model using load \textunderscore model \textunderscore tf, and then a custom function called random is used to randomly change specific pixel values. 
+The main FGSM perturbation function is what is mainly used to make this algorithm attack work. Perturbation is another word for change which is a term used for the FGSM attack. 
+It takes four arguments: image, model, epsilon, and target_label. The image is the model's input, the model is the Brightspace model/classifier, epsilon is a scalar value created which controls the magnitude or level of the perturbation, and target_label is the desired output label for the attack. 
+The function then calculates the gradient (rate of change/derivative) of the loss with respect to the input image using the TensorFlow GradientTape (a tool used to calculate gradients for the inputted images). 
+Then, the perturbation is calculated by multiplying the signed gradient with the epsilon value and then putting that into the original images. 
+These original images are provided in the algorithm in two different sections: grass and dandelions. For each section, the images are loaded and then converted into arrays so that they are in the right format to be affected by the FGSM attack. 
+Then the perturbed (or changed) image is clipped so that the pixel values are in a valid range of 0 to 1 so that they can be properly processed. 
+Finally, the prediction created by the FGSM algorithm previously are made using the Brightspace model and the predictions results are printed or outputted. 
+Ultimately, the FGSM attack fools the model by introducing small perturbations (changes) to the input images, making the model misclassify them while keeping the changes imperceptible to humans. 
+For my FGSM attack, it fooled the model by having it classify both the grass and dandelion images as grass ([,2] was close to 1 while [,1] was 0 for all the images and [,2] refers to grass probability while [,1] refers to dandelion probability). 
+
+\subsection{PGD Attack}
+\paragraph{The Projected Gradient Descent attack is an optimization algorithm that uses white-box attacks in an attempt to perturb images enough so that they can fool an image classifier. When researching different types of algorithms to try and work on to fool the pre trained classifier, there were 4 main types of adversarial attacks to consider: poisoning, evasion, extraction, and interference. [1] The most simple, yet feasible option seemed to be an evasion attack because it involves the use of a pre trained model, and it only modifies the input to the model, not the actual training data, unlike the other three options. When looking at the different types of evasion attacks, two stood out: FGSM or Fast Gradient Signed Method and PGD or Projected Gradient Descent. Both involve using a gradient to perturb an image a predetermined amount to add noise and try to fool the classifier. The most simple way of explaining how a gradient based adversarial atack works is that the algorithm computes the gradient of the model's output with respect to its input, and uses it to determine how to perturb the input. FGSM computes the gradient of loss function, a measure of how well the algorithm is performing, with respect to the input and then adds perturbation in the direction of the sign of the gradient. PGD applies FGSM iteratively to the input and projects the perturbed input onto the feasible set of inputs, for example 
+those within a specificed distance of the original input. [2] Since PGD is an interative process, it looks for the perturbation that makes the loss function maximized while ensuring the perturbation is less than the specified input epsilon but that will be discusses in the appendicies.}
+
+\subsection{Other Algorithms}
+
+\paragraph{In addition to the algorithms listed above, we developed a few other algorithms.}
+
 \subsection{Conclusion}
 
 \section{Appendix}
+
 \subsection{Testing/Correctness/Verification}
+\subsubsection{FGSM Debugging}
+\paragraph{Issue I faced: Incompatibility between the perturbation function and the input image. The perturbation function calculates the gradients for the input image with respect to the model's loss. These gradients sometimes produced perturbations that, when added to the original image, result in pixel values outside the valid range of [0, 1] thus creating an error. Clipping the perturbed image values to this valid range ensured compatibility with the input format expected by the model.}
+
+\paragraph{Solution I chose: I used the k \textunderscore clip function from the keras package to clip the pixel values of the perturbed image to the range [0, 1] after adding the perturbations.}
+
+\paragraph{ Issue I faced: Reshaping arrays in the perturbation function. The input image needed to be reshaped into a 4-dimensional array with a batch dimension (1, height, width, channels) to be compatible with the model's input. The target \textunderscore label also needed to be reshaped to match the model's output dimensions. I kept getting errors regarding incompatibility between the fgsm perturbation function and the input images' format. }
+
+\paragraph{Solution I chose: Therefore, I ended up using the array \textunderscore reshape function from the keras library to reshape the input image and target \textunderscore label to the appropriate dimensions.}
+
+\paragraph{Issue I faced: The error "non-numeric argument to binary operator" appears when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255) is what is happening here} 
+
+\paragraph{Solution I chose: To solve the issue, I ended up using the image \textunderscore to \textunderscore array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.}
 \subsection{Runtime Complexity and Walltime}
 \subsection{Performance}
 \subsection{Algorithm Justification}
+\subsubsection{Reasons to Choose FGSM}
+\paragraph
+{1. FGSM is a one-step method that generates adversarial examples by linearizing the loss function and maximizing it using the gradient sign. This basically means it operates from just one formula, making it both simpler and faster than alternatives (Deepfool, One Pixel, etc.) }
+\newline
+\paragraph{2. Everything about the magnitude and scale of the perturbations is through a simple epsilon scalar value, contributing to the aforementioned simplicity compared to the other options.
 
-\section{Sources}
 
+
+\section{References}
+
+\paragraph{Dahal, P. (2019, July 30). Adversarial attacks - breaking and defending neural networks. DeepNotes. Retrieved April 27, 2023, from https://deepnotes.io/adversarial-attack}
+
+\paragraph{Hui, J. (2020, July 22). Adversarial attacks. Medium. Retrieved April 27, 2023, from https://jonathan-hui.medium.com/adversarial-attacks-b58318bb497b#:~:text=Jacobian%2Dbased%20Saliency%20Map%20Attack%20(JSMA)&amp;text=This%20is%20a%20greedy%20algorithm,label)%20for%20a%20saliency%20map.}
+
+\paragraph{[1] Korolov, Maria. “Adversarial Machine Learning Explained: How Attackers Disrupt AI and ML Systems.” CSO Online, 28 June 2022, www.csoonline.com/article/3664748/adversarial-machine-learning-explained-how-attackers-disrupt-ai-and-ml-systems.html#:~:text=Types%20of%20adversarial%20machine%20learning,evasion%2C%20extraction%2C%20and%20inference. Accessed 27 Apr. 2023.}
+
+\paragraph{[2] Knagg, Oscar. “Know Your Enemy - towards Data Science.” Medium, Towards Data Science, 6 Jan. 2019, towardsdatascience.com/know-your-enemy-7f7c5038bdf3. Accessed 27 Apr. 2023.}
+
+\paragraph{Rosebrock, A. (2021, April 17). Adversarial attacks with FGSM (fast gradient sign method). PyImageSearch. Retrieved April 27, 2023, from https://pyimagesearch.com/2021/03/01/adversarial-attacks-with-fgsm-fast-gradient-sign-method/} 
+
+‌
 \end{document}
