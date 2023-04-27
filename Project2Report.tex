@@ -159,7 +159,7 @@ Accountable together -- we are Purdue.''}
 
 \subsection{Fast Gradient Signed Method Attack}
 \paragraph{ 
-The FGSM algorithm begins by loading the necessary libraries, then loading the model using load \textunderscore model \textunderscore tf, and then a custom function called random is used to randomly change specific pixel values. 
+The FGSM algorithm begins by loading the necessary libraries, then loading the model using load_model_tf, and then a custom function called random is used to randomly change specific pixel values. 
 The main FGSM perturbation function is what is mainly used to make this algorithm attack work. Perturbation is another word for change which is a term used for the FGSM attack. 
 It takes four arguments: image, model, epsilon, and target_label. The image is the model's input, the model is the Brightspace model/classifier, epsilon is a scalar value created which controls the magnitude or level of the perturbation, and target_label is the desired output label for the attack. 
 The function then calculates the gradient (rate of change/derivative) of the loss with respect to the input image using the TensorFlow GradientTape (a tool used to calculate gradients for the inputted images). 
@@ -171,40 +171,57 @@ Ultimately, the FGSM attack fools the model by introducing small perturbations (
 For my FGSM attack, it fooled the model by having it classify both the grass and dandelion images as grass ([,2] was close to 1 while [,1] was 0 for all the images and [,2] refers to grass probability while [,1] refers to dandelion probability). 
 
 \subsection{PGD Attack}
-\paragraph{The Projected Gradient Descent attack is an optimization algorithm that uses white-box attacks in an attempt to perturb images enough so that they can fool an image classifier. When researching different types of algorithms to try and work on to fool the pre trained classifier, there were 4 main types of adversarial attacks to consider: poisoning, evasion, extraction, and interference. [1] The most simple, yet feasible option seemed to be an evasion attack because it involves the use of a pre trained model, and it only modifies the input to the model, not the actual training data, unlike the other three options. When looking at the different types of evasion attacks, two stood out: FGSM or Fast Gradient Signed Method and PGD or Projected Gradient Descent. Both involve using a gradient to perturb an image a predetermined amount to add noise and try to fool the classifier. The most simple way of explaining how a gradient based adversarial atack works is that the algorithm computes the gradient of the model's output with respect to its input, and uses it to determine how to perturb the input. FGSM computes the gradient of loss function, a measure of how well the algorithm is performing, with respect to the input and then adds perturbation in the direction of the sign of the gradient. PGD applies FGSM iteratively to the input and projects the perturbed input onto the feasible set of inputs, for example 
-those within a specificed distance of the original input. [2] Since PGD is an interative process, it looks for the perturbation that makes the loss function maximized while ensuring the perturbation is less than the specified input epsilon but that will be discusses in the appendicies.}
+\paragraph{The Projected Gradient Descent attack is an optimization algorithm that uses white-box attacks in an attempt to perturb images enough so that they can fool an image 
+classifier. When researching different types of algorithms to try and work on to fool the pre trained classifier, there were 4 main types of adversarial attacks to consider: 
+poisoning, evasion, extraction, and interference. [1] The most simple, yet feasible option seemed to be an evasion attack because it involves the use of a pre trained model, 
+and it only modifies the input to the model, not the actual training data, unlike the other three options. When looking at the different types of evasion attacks, two stood out: 
+FGSM or Fast Gradient Signed Method and PGD or Projected Gradient Descent. Both involve using a gradient to perturb an image a predetermined amount to add noise and try to fool the classifier. 
+The most simple way of explaining how a gradient based adversarial atack works is that the algorithm computes the gradient of the model's output with respect to its input, and uses 
+it to determine how to perturb the input. FGSM computes the gradient of loss function, a measure of how well the algorithm is performing, with respect to the input and then adds 
+perturbation in the direction of the sign of the gradient. PGD applies FGSM iteratively to the input and projects the perturbed input onto the feasible set of inputs, for example 
+those within a specificed distance of the original input. [2] Since PGD is an interative process, it looks for the perturbation that makes the loss function maximized while 
+ensuring the perturbation is less than the specified input epsilon but that will be discusses in the appendicies.}
 
-\subsection{Other Algorithms}
+\subsection{Deep Fool}
+\paragraph{Deep Fool is an algorithm with to machine learning models that are designed to cause the model to make incorrect predictions. One of the key advantages of Deep Fool is that it can quickly generate highly effective adversarial examples using a minor amount of confusion. This is because Deep Fool uses linear approximation on the decision boundary of the model, permitting it to find the smallest possible perturbations, causing the model to change its prediction. Additionally, Deep Fool is effective against a wide range of machine learning models, including both deep neural networks and more traditional models like support vector machines.
 
-\paragraph{In addition to the algorithms listed above, we developed a few other algorithms.}
+The algorithm works by computing the distance between a given input image and the decision boundary of the target model. At each iteration, the algorithm finds the direction in which the input can be most effectively perturbed to move it closer to the decision boundary, and then applies a small perturbation in that direction. The size of the perturbation is chosen to be as small as possible while still being enough to cause the model to change its prediction. This process is repeated until the input image is classified incorrectly by the model.
+
+One of the reasons why Deep Fool is a good choice for generating adversarial examples is that it is relatively easy to implement. Because it uses a linear approximation of the decision boundary, it is often more efficient than other algorithms that rely on gradient information. This means that it can generate adversarial examples more quickly and with fewer computational resources. Finally, Deep Fool is able to generate highly effective adversarial examples that are often difficult for humans to distinguish from the original input. This makes it a powerful tool for testing the robustness of machine learning models and identifying potential vulnerabilities. Based on all this information we are using Deep Fool as it will be efficient in confusing the images.
+
+
+
+
+
+}
 
 \subsection{Conclusion}
 
 \section{Appendix}
 
 \subsection{Testing/Correctness/Verification}
-\subsubsection{FGSM Debugging}
-\paragraph{Issue I faced: Incompatibility between the perturbation function and the input image. The perturbation function calculates the gradients for the input image with respect to the model's loss. These gradients sometimes produced perturbations that, when added to the original image, result in pixel values outside the valid range of [0, 1] thus creating an error. Clipping the perturbed image values to this valid range ensured compatibility with the input format expected by the model.}
-
-\paragraph{Solution I chose: I used the k \textunderscore clip function from the keras package to clip the pixel values of the perturbed image to the range [0, 1] after adding the perturbations.}
-
-\paragraph{ Issue I faced: Reshaping arrays in the perturbation function. The input image needed to be reshaped into a 4-dimensional array with a batch dimension (1, height, width, channels) to be compatible with the model's input. The target \textunderscore label also needed to be reshaped to match the model's output dimensions. I kept getting errors regarding incompatibility between the fgsm perturbation function and the input images' format. }
-
-\paragraph{Solution I chose: Therefore, I ended up using the array \textunderscore reshape function from the keras library to reshape the input image and target \textunderscore label to the appropriate dimensions.}
-
-\paragraph{Issue I faced: The error "non-numeric argument to binary operator" appears when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255) is what is happening here} 
-
-\paragraph{Solution I chose: To solve the issue, I ended up using the image \textunderscore to \textunderscore array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.}
 \subsection{Runtime Complexity and Walltime}
 \subsection{Performance}
 \subsection{Algorithm Justification}
-\subsubsection{Reasons to Choose FGSM}
+\subsection{Reasons to Choose FGSM}
 \paragraph
 {1. FGSM is a one-step method that generates adversarial examples by linearizing the loss function and maximizing it using the gradient sign. This basically means it operates from just one formula, making it both simpler and faster than alternatives (Deepfool, One Pixel, etc.) }
 \newline
 \paragraph{2. Everything about the magnitude and scale of the perturbations is through a simple epsilon scalar value, contributing to the aforementioned simplicity compared to the other options.
+\subsubsection{FGSM Debugging}
+\paragraph{Issue I faced: Incompatibility between the perturbation function and the input image. The perturbation function calculates the gradients for the input image with respect to the model's loss. These gradients sometimes produced perturbations that, when added to the original image, result in pixel values outside the valid range of [0, 1] thus creating an error. Clipping the perturbed image values to this valid range ensured compatibility with the input format expected by the model.}
 
+\paragraph{Solution I chose: I used the k_clip function from the keras package to clip the pixel values of the perturbed image to the range [0, 1] after adding the perturbations.}
 
+\paragraph{ Issue I faced: Reshaping arrays in the perturbation function. The input image needed to be reshaped into a 4-dimensional array with a batch dimension (1, height, width, channels) to be compatible with the model's input. The target_label also needed to be reshaped to match the model's output dimensions. I kept getting errors regarding incompatibility between the fgsm perturbation function and the input images' format. }
+
+\paragraph{Solution I chose: Therefore, I ended up using the array_reshape function from the keras library to reshape the input image and target_label to the appropriate dimensions.}
+
+\paragraph{Issue I faced: The error "non-numeric argument to binary operator" when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255).} 
+
+\paragraph{Solution I chose: To solve the issue, I ended up using the image_to_array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.}
+
+\paragraph{For deep fool there was one error:  could not find function "mx.nd.array". I figured out that I did not have the appropriate library downloaded for it to find the function. Once I installed the package opencv then the code overall was functioning except that I am not able to see the result. If the algorithm were to work then we would be able to see whether or not we fooled the compiler and it was still the same to the naked eye. Right now I have a set epsilon value of .3 as this worked on one of our other algorithms.  
 
 \section{References}
 
@@ -215,8 +232,6 @@ those within a specificed distance of the original input. [2] Since PGD is an in
 \paragraph{[1] Korolov, Maria. “Adversarial Machine Learning Explained: How Attackers Disrupt AI and ML Systems.” CSO Online, 28 June 2022, www.csoonline.com/article/3664748/adversarial-machine-learning-explained-how-attackers-disrupt-ai-and-ml-systems.html#:~:text=Types%20of%20adversarial%20machine%20learning,evasion%2C%20extraction%2C%20and%20inference. Accessed 27 Apr. 2023.}
 
 \paragraph{[2] Knagg, Oscar. “Know Your Enemy - towards Data Science.” Medium, Towards Data Science, 6 Jan. 2019, towardsdatascience.com/know-your-enemy-7f7c5038bdf3. Accessed 27 Apr. 2023.}
-
-\paragraph{Rosebrock, A. (2021, April 17). Adversarial attacks with FGSM (fast gradient sign method). PyImageSearch. Retrieved April 27, 2023, from https://pyimagesearch.com/2021/03/01/adversarial-attacks-with-fgsm-fast-gradient-sign-method/} 
 
 ‌
 \end{document}
