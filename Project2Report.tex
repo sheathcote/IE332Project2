@@ -191,14 +191,6 @@ ensuring the perturbation is less than the specified input epsilon but that will
 \section{Appendix}
 
 \subsection{Testing/Correctness/Verification}
-\subsection{Runtime Complexity and Walltime}
-\subsection{Performance}
-\subsection{Algorithm Justification}
-\subsection{Reasons to Choose FGSM}
-\paragraph
-{1. FGSM is a one-step method that generates adversarial examples by linearizing the loss function and maximizing it using the gradient sign. This basically means it operates from just one formula, making it both simpler and faster than alternatives (Deepfool, One Pixel, etc.) }
-\newline
-\paragraph{2. Everything about the magnitude and scale of the perturbations is through a simple epsilon scalar value, contributing to the aforementioned simplicity compared to the other options.
 \subsubsection{FGSM Debugging}
 \paragraph{Issue I faced: Incompatibility between the perturbation function and the input image. The perturbation function calculates the gradients for the input image with respect to the model's loss. These gradients sometimes produced perturbations that, when added to the original image, result in pixel values outside the valid range of [0, 1] thus creating an error. Clipping the perturbed image values to this valid range ensured compatibility with the input format expected by the model.}
 
@@ -211,6 +203,16 @@ ensuring the perturbation is less than the specified input epsilon but that will
 \paragraph{Issue I faced: The error "non-numeric argument to binary operator" when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255).} 
 
 \paragraph{Solution I chose: To solve the issue, I ended up using the image_to_array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.}
+\subsection{Runtime Complexity and Walltime}
+\subsection{Performance}
+\subsection{Algorithm Justification}
+\subsubsection{Reasons to Choose FGSM}
+\paragraph
+{1. FGSM is a one-step method that generates adversarial examples by linearizing the loss function and maximizing it using the gradient sign. This basically means it operates from just one formula, making it both simpler and faster than alternatives (Deepfool, One Pixel, etc.) }
+\newline
+\paragraph{2. Everything about the magnitude and scale of the perturbations is through a simple epsilon scalar value, contributing to the aforementioned simplicity compared to the other options.
+
+
 
 \section{References}
 
