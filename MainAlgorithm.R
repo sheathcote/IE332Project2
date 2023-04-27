@@ -75,9 +75,24 @@ main <- function(img, b, imgtype = 1) {
   #and change the corresponding pixel in the image
   for (i in 1:b) {
     index <- which(sumMatrix == max(sumMatrix), arr.ind = TRUE)
+    maxVal <- max(matrix1[index[1],index[2]],matrix2[index[1],index[2]],
+                  matrix3[index[1],index[2]],matrix4[index[1],index[2]],
+                  matrix5[index[1],index[2]])
     #find which matrix had the max value and set the img pixel value to the 
     #pixel values from the corresponding image
-    img[index[1],index[2],] <- img[index[1],index[2],]
+    if (matrix1[index[1],index[2]] == maxVal) {
+      img[index[1],index[2],] <- img1[index[1],index[2],]
+    } else if (matrix2[index[1],index[2]] == maxVal) {
+      img[index[1],index[2],] <- img2[index[1],index[2],]
+    } else if (matrix3[index[1],index[2]] == maxVal) {
+      img[index[1],index[2],] <- img3[index[1],index[2],]
+    } else if (matrix4[index[1],index[2]] == maxVal) {
+      img[index[1],index[2],] <- img4[index[1],index[2],]
+    } else if (matrix5[index[1],index[2]] == maxVal) {
+      img[index[1],index[2],] <- img5[index[1],index[2],]
+    }
+        
+
   }
   
   #return the image
