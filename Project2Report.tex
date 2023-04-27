@@ -154,8 +154,8 @@ Accountable together -- we are Purdue.''}
 \paragraph{As the world moves toward more reliance on AI and robotics, it is important that we understand how adversarial attacks can be used to fool machine learning tools, such as image classifiers. Understanding and being able to stop adversarial attacks could have a large impact on the future, especially in situations such as autonomous driving, where the consequences of classifying a stop sign incorrectly could be death (Hui, 2020).}
 
 \subsection{Jacobian-based Saliency Map Attack (JSMA)}
-\paragraph{The Jacobian-based Saliency Map Attack is a greedy algorithm that changes one pixel at a time over many iterations until the modified picture can fool the image classifier model into mislabeling it. This algorithm takes in an image, a model used to classify the images, a target label, and a maximum number of changes. It then iteratively calls a JSMA function that uses a saliency map to decide what pixel to change next. A saliency map is created by computing the change in the logit score of the target label for each pixel. Then, the pixel with the largest change to the logit score is chosen and changed. This is repeated until the image is able to fool the image classifier or the maximum number of changes is reached.}
-\paragraph{This type of attack is a good fit for our project because we have a limited budget of pixels, so an algorithm that changes one pixel at a time would be easy to stop when it reaches the pixel budget. Furthermore, since this function takes in a maximum number of changes variable, we can easily modify this variable to be the chosen pixel budget.}
+\paragraph{The Jacobian-based Saliency Map Attack is a greedy algorithm that changes one pixel at a time over many iterations until the modified picture can fool the image classifier model into mislabeling it. This algorithm takes in an image, a model used to classify the images, a target label, and a maximum number of changes. It then iteratively calls a JSMA function that uses a saliency map to decide what pixel to change next. A saliency map is created by computing the change in the logit score of the target label for each pixel. Then, the pixel with the largest change to the logit score is chosen and changed. This is repeated until the image is able to fool the image classifier or the maximum number of changes is reached. (Dahal, 2019)}
+\paragraph{This type of attack is a good fit for our project because we have a limited budget of pixels, so an algorithm that changes one pixel at a time would be easy to stop when it reaches the pixel budget. Furthermore, since this function takes in a maximum number of changes variable, we can easily modify this variable to be the chosen pixel budget. In adition to being easy to limit the number of changes made by this algorithm, since this algorithm focuses on changing pixels that have the largest effect on the logit score of the target label, the algorithm should still be somewhat effective when the pixel allowance is small.}
 
 \subsection{Fast Gradient Signed Method Attack}
 \paragraph{ 
@@ -196,6 +196,8 @@ ensuring the perturbation is less than the specified input epsilon but that will
 \subsection{Algorithm Justification}
 
 \section{References}
+
+\paragraph{Dahal, P. (2019, July 30). Adversarial attacks - breaking and defending neural networks. DeepNotes. Retrieved April 27, 2023, from https://deepnotes.io/adversarial-attack}
 
 \paragraph{Hui, J. (2020, July 22). Adversarial attacks. Medium. Retrieved April 27, 2023, from https://jonathan-hui.medium.com/adversarial-attacks-b58318bb497b#:~:text=Jacobian%2Dbased%20Saliency%20Map%20Attack%20(JSMA)&amp;text=This%20is%20a%20greedy%20algorithm,label)%20for%20a%20saliency%20map.}
 
