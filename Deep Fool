@@ -1,6 +1,7 @@
 library(mxnet)
 library(opencv)
 library(magrittr)
+library(jpeg)
 
 model <- mx.model.load('model-symbol.json', 'model-0000.params', ctx = mx.cpu(), type = "mxnet")
 
