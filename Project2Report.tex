@@ -159,7 +159,7 @@ Accountable together -- we are Purdue.''}
 
 \subsection{Fast Gradient Signed Method Attack}
 \paragraph{ 
-The FGSM algorithm begins by loading the necessary libraries, then loading the model using load_model_tf, and then a custom function called random is used to randomly change specific pixel values. 
+The FGSM algorithm begins by loading the necessary libraries, then loading the model using load \textunderscore model \textunderscore tf, and then a custom function called random is used to randomly change specific pixel values. 
 The main FGSM perturbation function is what is mainly used to make this algorithm attack work. Perturbation is another word for change which is a term used for the FGSM attack. 
 It takes four arguments: image, model, epsilon, and target_label. The image is the model's input, the model is the Brightspace model/classifier, epsilon is a scalar value created which controls the magnitude or level of the perturbation, and target_label is the desired output label for the attack. 
 The function then calculates the gradient (rate of change/derivative) of the loss with respect to the input image using the TensorFlow GradientTape (a tool used to calculate gradients for the inputted images). 
@@ -194,15 +194,15 @@ ensuring the perturbation is less than the specified input epsilon but that will
 \subsubsection{FGSM Debugging}
 \paragraph{Issue I faced: Incompatibility between the perturbation function and the input image. The perturbation function calculates the gradients for the input image with respect to the model's loss. These gradients sometimes produced perturbations that, when added to the original image, result in pixel values outside the valid range of [0, 1] thus creating an error. Clipping the perturbed image values to this valid range ensured compatibility with the input format expected by the model.}
 
-\paragraph{Solution I chose: I used the k_clip function from the keras package to clip the pixel values of the perturbed image to the range [0, 1] after adding the perturbations.}
+\paragraph{Solution I chose: I used the k \textunderscore clip function from the keras package to clip the pixel values of the perturbed image to the range [0, 1] after adding the perturbations.}
 
-\paragraph{ Issue I faced: Reshaping arrays in the perturbation function. The input image needed to be reshaped into a 4-dimensional array with a batch dimension (1, height, width, channels) to be compatible with the model's input. The target_label also needed to be reshaped to match the model's output dimensions. I kept getting errors regarding incompatibility between the fgsm perturbation function and the input images' format. }
+\paragraph{ Issue I faced: Reshaping arrays in the perturbation function. The input image needed to be reshaped into a 4-dimensional array with a batch dimension (1, height, width, channels) to be compatible with the model's input. The target \textunderscore label also needed to be reshaped to match the model's output dimensions. I kept getting errors regarding incompatibility between the fgsm perturbation function and the input images' format. }
 
-\paragraph{Solution I chose: Therefore, I ended up using the array_reshape function from the keras library to reshape the input image and target_label to the appropriate dimensions.}
+\paragraph{Solution I chose: Therefore, I ended up using the array \textunderscore reshape function from the keras library to reshape the input image and target \textunderscore label to the appropriate dimensions.}
 
-\paragraph{Issue I faced: The error "non-numeric argument to binary operator" when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255).} 
+\paragraph{Issue I faced: The error "non-numeric argument to binary operator" appears when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255) is what is happening here} 
 
-\paragraph{Solution I chose: To solve the issue, I ended up using the image_to_array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.}
+\paragraph{Solution I chose: To solve the issue, I ended up using the image \textunderscore to \textunderscore array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.}
 \subsection{Runtime Complexity and Walltime}
 \subsection{Performance}
 \subsection{Algorithm Justification}
