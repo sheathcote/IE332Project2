@@ -189,7 +189,11 @@ The algorithm works by computing the distance between a given input image and th
 
 One of the reasons why Deep Fool is a good choice for generating adversarial examples is that it is relatively easy to implement. Because it uses a linear approximation of the decision boundary, it is often more efficient than other algorithms that rely on gradient information. This means that it can generate adversarial examples more quickly and with fewer computational resources. Finally, Deep Fool is able to generate highly effective adversarial examples that are often difficult for humans to distinguish from the original input. This makes it a powerful tool for testing the robustness of machine learning models and identifying potential vulnerabilities. Based on all this information we are using Deep Fool as it will be efficient in confusing the images.
 
-
+\subsection{Other Algorithms Discussion}
+\subsubsection{Spatial Transformation Attack}
+\paragraph{The Spatial Transformation Attack that I attempted utilized affine transformations on the input images as opposed to the gradient-based changes of the FGSM. Then like the FGSM, it normalized the images to an appropriate pixel range (0 to 1 for pixel values as opposed to 0 to 255 for integers). Ultimately after a lot of editing and debugging, I got the attack to give an output but it wasn't in the format I wanted. While the attack's output did show the time taken for each image, it wouldn't show the probability rating for grass and dandelions for each image. I tried to hardcode some of the output syntax but that only made the end result messier. Ultimately, I decided that FGSM attack was simpler and more effective than this attack.}
+\subsubsection{One Pixel Attack}
+\paragraph{ The One Pixel Attack that I attempted as the name suggests change one pixel in the image to fool the model/classifier. Ultimately, I found this attack inefficient and unreliable, taking on significantly more runtime (250 milliseconds per image) all while giving messier output. Once I found out about FGSM and its use of an episilon based equation, I decided to stop using the One Pixel Attack}
 
 
 
