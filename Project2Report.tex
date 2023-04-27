@@ -151,8 +151,12 @@ Accountable together -- we are Purdue.''}
 \newpage
 \section{Main Text}
 \subsection{Introduction}
-\subsection{Jacobian-based Saliency Map Attack}
-\paragraph{The Jacobian-based Saliency Map Attack is an a greedy algorithm that changes one pixel at a time over many iterations until the modified picture can fool the image classifier model. This type of attack is a good fit for our project because we have a limited budget of pixels, so an algorithm that changes one pixel at a time would be easy to stop when it reaches the pixel budget.}
+\paragraph{As the world moves toward more reliance on AI and robotics, it is important that we understand how adversarial attacks can be used to fool machine learning tools, such as image classifiers. Understanding and being able to stop adversarial attacks could have a large impact on the future, especially in situations such as autonomous driving, where the consequences of classifying a stop sign incorrectly could be death (Hui, 2020).}
+
+\subsection{Jacobian-based Saliency Map Attack (JSMA)}
+\paragraph{The Jacobian-based Saliency Map Attack is a greedy algorithm that changes one pixel at a time over many iterations until the modified picture can fool the image classifier model into mislabeling it. This algorithm takes in an image, a model used to classify the images, a target label, and a maximum number of changes. It then iteratively calls a JSMA function that uses a saliency map to decide what pixel to change next. A saliency map is created by computing the change in the logit score of the target label for each pixel. Then, the pixel with the largest change to the logit score is chosen and changed. This is repeated until the image is able to fool the image classifier or the maximum number of changes is reached.}
+\paragraph{This type of attack is a good fit for our project because we have a limited budget of pixels, so an algorithm that changes one pixel at a time would be easy to stop when it reaches the pixel budget. Furthermore, since this function takes in a maximum number of changes variable, we can easily modify this variable to be the chosen pixel budget.}
+
 \subsection{Fast Gradient Signed Method Attack}
 \paragraph{ 
 The FGSM algorithm begins by loading the necessary libraries, then loading the model using load_model_tf, and then a custom function called random is used to randomly change specific pixel values. 
