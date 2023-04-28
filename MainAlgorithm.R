@@ -1,4 +1,11 @@
 
+#load packages
+library(tidyverse)
+library(keras)
+library(tensorflow)
+library(reticulate)
+library(jpeg)
+
 #majority voting classifier that puts the other five algorithms together
 #img is the image to be modified stored as an array
 #b is the pixel budget
@@ -12,24 +19,32 @@ main <- function(img, b, imgtype = 1) {
     target_type <- 1
   }
 
-  
+  #print("made it to main")
   #call 5 sub algorithms and save resulting image matrices
-  img1 <- generate_jsma(model, img, target_type, epochs = b)
-  img2 <- FGSMFunction(img, b)
-  img3 <- PGDFunction(img, b)
-  img4 <- CWFunction(img, b)
-  img5 <- LastFunction(img, b)
+  img1 <- random1(img, b)
+  img2 <- random2(img, b)
+  img3 <- random3(img, b)
+  img4 <- random4(img, b)
+  img5 <- random5(img, b)
   
+  #print(img[50:55,50:55,1])
+  #print(img1[50:55,50:55,1])
+  #print(img2[50:55,50:55,1])
+  #print(img3[50:55,50:55,1])
+  #print(img4[50:55,50:55,1])
+  #print(img5[50:55,50:55,1])
+  
+  #print("functions ran")
   #compare image to original image matrix and make matrix of 1's and 0's
   #where 1's are changed pixels, 0's are unmodified pixels
-  x_size <- length(img[,1,1])
-  y_size <- length(img[1,,1])
-  b < (x_size*y_size)/100
+  x_size <- length(img[,1,1]) #width of image
+  y_size <- length(img[1,,1]) #height of image
   matrix1 <- matrix(data = 0, nrow = x_size, ncol = y_size)
   matrix2 <- matrix(data = 0, nrow = x_size, ncol = y_size)
   matrix3 <- matrix(data = 0, nrow = x_size, ncol = y_size)
   matrix4 <- matrix(data = 0, nrow = x_size, ncol = y_size)
   matrix5 <- matrix(data = 0, nrow = x_size, ncol = y_size)
+  
   #loop through image
   for (i in 1:x_size) {
     for (j in 1:y_size) {
@@ -56,6 +71,13 @@ main <- function(img, b, imgtype = 1) {
     }
   }
   
+  #print(matrix1[50:55,50:55])
+  #print(matrix2[50:55,50:55])
+  #print(matrix3[50:55,50:55])
+  #print(matrix4[50:55,50:55])
+  #print(matrix5[50:55,50:55])
+  #print("made matrices")
+  
   #get random weights
   weights <- matrix(runif(5,0,1), ncol=5)
   weights <- weights/sum(weights)
@@ -69,16 +91,20 @@ main <- function(img, b, imgtype = 1) {
   matrix5 <- weights[5] * matrix5
   
   #sum all the matrices
-  sumMatrix <- sum(matrix1, matrix2, matrix3, matrix4, matrix5)
+  sumMatrix <- matrix1 + matrix2 + matrix3 + matrix4 + matrix5
   
+  #print(sumMatrix[50:55,50:55])
+  #print("summed matrix")
   
   #find the location of the max value in the matrix 
   #and change the corresponding pixel in the image
   for (i in 1:b) {
-    index <- which(sumMatrix == max(sumMatrix), arr.ind = TRUE)
-    maxVal <- max(matrix1[index[1],index[2]],matrix2[index[1],index[2]],
-                  matrix3[index[1],index[2]],matrix4[index[1],index[2]],
-                  matrix5[index[1],index[2]])
+    index <- which(sumMatrix == max(sumMatrix),arr.ind = TRUE)
+    maxVal <- max(matrix1[index[1,1],index[1,2]],matrix2[index[1,1],index[1,2]],
+                  matrix3[index[1,1],index[1,2]],matrix4[index[1,1],index[1,2]],
+                  matrix5[index[1,1],index[1,2]])
+    sumMatrix[index[1,1], index[1,2]] <- 0
+    #print(c(index[1,1],index[1,2]))
     #find which matrix had the max value and set the img pixel value to the 
     #pixel values from the corresponding image
     if (matrix1[index[1],index[2]] == maxVal) {
@@ -92,10 +118,63 @@ main <- function(img, b, imgtype = 1) {
     } else if (matrix5[index[1],index[2]] == maxVal) {
       img[index[1],index[2],] <- img5[index[1],index[2],]
     }
-        
-
   }
-  
+  #print(img[50:55,50:55,1])
+  #print("close to return!")
   #return the image
   return(img)
+}
+
+#set working directory
+setwd("C:/Users/sheat/OneDrive/Documents/IE332Project/Project2")
+getwd()
+
+target_size <- c(224, 224)
+
+#code to load model
+model <- load_model_tf("./dandelion_model")
+
+f=list.files("./grass")
+for (i in f){
+  #print(paste("./grass/",f[1],sep=""))
+  #x <- readJPEG(paste("./grass/",f[1],sep=""))
+  test_image <- image_load(paste("./grass/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- x/ 255
+  x_size <- length(x[,1,1]) #width of image
+  y_size <- length(x[1,,1]) #height of image
+  b <- (x_size * y_size) / 100
+  img <- main(x, b)
+  writeJPEG(img, paste("./modified_grass/",i,sep=""))
+  
+  #test with model
+  img <- array_reshape(img, c(1, dim(img)))
+  pred <- model %>% predict(img)
+  print(pred)
+  x <- array_reshape(x, c(1, dim(x)))
+  og <- model %>% predict(x)
+  print(og)
+}
+
+
+f=list.files("./dandelions")
+#i <- f[1]
+for (i in f){
+  test_image <- image_load(paste("./dandelions/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- x/ 255
+  x_size <- length(x[,1,1]) #width of image
+  y_size <- length(x[1,,1]) #height of image
+  b <- (x_size * y_size) / 100
+  img <- main(x, b)
+  writeJPEG(img, paste("./modified_dandelions/",i,sep=""))
+  
+  #test with model
+  img <- array_reshape(img, c(1, dim(img)))
+  pred <- model %>% predict(img)
+  if (pred[1,1] < 0.5) {
+    print(pred)
+  }
 }
