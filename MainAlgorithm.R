@@ -32,24 +32,24 @@ main <- function(img, b, imgtype = 1) {
   #loop through image
   for (i in 1:x_size) {
     for (j in 1:y_size) {
-      if ((abs(img1[i,j,1] - img[i,j,1]) > 0.05) || (abs(img1[i,j,2] - img[i,j,2]) > 0.05) 
-          ||(abs(img1[i,j,3] - img[i,j,3]) > 0.05)) {
+      if ((abs(img1[i,j,1] - img[i,j,1]) > 0.005) || (abs(img1[i,j,2] - img[i,j,2]) > 0.005) 
+          ||(abs(img1[i,j,3] - img[i,j,3]) > 0.005)) {
         matrix1[i,j] <- 1
       }
-      if ((abs(img2[i,j,1] - img[i,j,1]) > 0.05) || (abs(img2[i,j,2] - img[i,j,2]) > 0.05) 
-          ||(abs(img2[i,j,3] - img[i,j,3]) > 0.05)) {
+      if ((abs(img2[i,j,1] - img[i,j,1]) > 0.005) || (abs(img2[i,j,2] - img[i,j,2]) > 0.005) 
+          ||(abs(img2[i,j,3] - img[i,j,3]) > 0.005)) {
         matrix2[i,j] <- 1
       }
-      if ((abs(img3[i,j,1] - img[i,j,1]) > 0.05) || (abs(img3[i,j,2] - img[i,j,2]) > 0.05) 
-          ||(abs(img3[i,j,3] - img[i,j,3]) > 0.05)) {
+      if ((abs(img3[i,j,1] - img[i,j,1]) > 0.005) || (abs(img3[i,j,2] - img[i,j,2]) > 0.005) 
+          ||(abs(img3[i,j,3] - img[i,j,3]) > 0.005)) {
         matrix3[i,j] <- 1
       }
-      if ((abs(img4[i,j,1] - img[i,j,1]) > 0.05) || (abs(img4[i,j,2] - img[i,j,2]) > 0.05) 
-          ||(abs(img4[i,j,3] - img[i,j,3]) > 0.05)) {
+      if ((abs(img4[i,j,1] - img[i,j,1]) > 0.005) || (abs(img4[i,j,2] - img[i,j,2]) > 0.005) 
+          ||(abs(img4[i,j,3] - img[i,j,3]) > 0.005)) {
         matrix4[i,j] <- 1
       }
-      if ((abs(img5[i,j,1] - img[i,j,1]) > 0.05) || (abs(img5[i,j,2] - img[i,j,2]) > 0.05) 
-          ||(abs(img5[i,j,3] - img[i,j,3]) > 0.05)) {
+      if ((abs(img5[i,j,1] - img[i,j,1]) > 0.005) || (abs(img5[i,j,2] - img[i,j,2]) > 0.005) 
+          ||(abs(img5[i,j,3] - img[i,j,3]) > 0.005)) {
         matrix5[i,j] <- 1
       }
     }
