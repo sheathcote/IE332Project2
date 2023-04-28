@@ -134,7 +134,7 @@ target_size <- c(224, 224)
 #code to load model
 model <- load_model_tf("./dandelion_model")
 
-f=list.files("./grass")
+f <- list.files("./grass")
 for (i in f){
   #print(paste("./grass/",f[1],sep=""))
   #x <- readJPEG(paste("./grass/",f[1],sep=""))
@@ -151,14 +151,16 @@ for (i in f){
   #test with model
   img <- array_reshape(img, c(1, dim(img)))
   pred <- model %>% predict(img)
-  print(pred)
-  x <- array_reshape(x, c(1, dim(x)))
-  og <- model %>% predict(x)
-  print(og)
+  if (pred[1,2] < 0.5) {
+    print(pred)
+  }
+  #x <- array_reshape(x, c(1, dim(x)))
+  #og <- model %>% predict(x)
+  #print(og)
 }
 
 
-f=list.files("./dandelions")
+f <- list.files("./dandelions")
 #i <- f[1]
 for (i in f){
   test_image <- image_load(paste("./dandelions/",i,sep=""),
