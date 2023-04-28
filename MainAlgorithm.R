@@ -24,6 +24,7 @@ main <- function(img, b, imgtype = 1) {
   #where 1's are changed pixels, 0's are unmodified pixels
   x_size <- length(img[,1,1])
   y_size <- length(img[1,,1])
+  b < (x_size*y_size)/100
   matrix1 <- matrix(data = 0, nrow = x_size, ncol = y_size)
   matrix2 <- matrix(data = 0, nrow = x_size, ncol = y_size)
   matrix3 <- matrix(data = 0, nrow = x_size, ncol = y_size)
