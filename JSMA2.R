@@ -80,7 +80,8 @@ target_size <- c(224, 224)
 img <- image_load(paste("./grass/",gu[5],sep=""), target_size = target_size)
 img <- image_to_array(img)
 img <- array_reshape(img, c(1, dim(img)))
-img <- imagenet_preprocess_input(img)
+img <- img/255
+#img <- imagenet_preprocess_input(img)
 
 
 # Choose target class
