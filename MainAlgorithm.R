@@ -17,7 +17,7 @@ main <- function(img, b, imgtype = 1) {
   img1 <- generate_jsma(model, img, target_type, epochs = b)
   img2 <- FGSMFunction(img, b)
   img3 <- PGDFunction(img, b)
-  img4 <- SVMFunction(img, b)
+  img4 <- CWFunction(img, b)
   img5 <- LastFunction(img, b)
   
   #compare image to original image matrix and make matrix of 1's and 0's
