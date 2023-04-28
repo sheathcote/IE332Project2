@@ -13,7 +13,7 @@ getwd()
 model <- load_model_tf("./dandelion_model")
 summary(model)
 
-#function that makes modifies images
+#function that makes modified images
 #image is the image to be changed
 #P is the percent of pixels I get to change
 random <- function (x, P) {
