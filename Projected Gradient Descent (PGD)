@@ -49,10 +49,10 @@ for (i in du){
 # Define the PGD attack parameters
 epsilon <- 0.01
 alpha <- 0.01
-num_iterations <- 10
+iterations <- 10
 
 # PGD attack algorithm
-pgd_attack <- function(image, epsilon, alpha, num_iterations, target_class){
+pgd_attack <- function(image, epsilon, alpha, iterations, target_class){
   # Convert the image to an array and reshape it
   x <- image_to_array(image)
   x_dims <- dim(image)[1:3]
@@ -63,7 +63,7 @@ pgd_attack <- function(image, epsilon, alpha, num_iterations, target_class){
   y_target[1, target_class] <- 1
   # Perform the PGD attack
   x_adv <- x
-  for(i in 1:num_iterations){
+  for(i in 1:iterations){
     with(tf$GradientTape(persistent=TRUE) %as% tape, {
       x_adv <- tf$Variable(x_adv)
       loss <- keras$backend$categorical_crossentropy(y_target, model(x_adv))
