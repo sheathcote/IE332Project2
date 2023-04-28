@@ -74,17 +74,17 @@ Accountable together -- we are Purdue.''}
 \begin{table}[h!]
   \begin{center}
     \label{tab:table1}
-    \begin{tabular}{c|ccccc|c|c}
-      Student & Algorithms & IDK & What should & Go Here & Report & Overall & DIFF\\
+    \begin{tabular}{c|ccc|c|c}
+      Student & Sub Algorithms & Weighted Classifier & Report & Overall & DIFF\\
       \hline
-      Alec F & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-      Dhruv G & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-      Glen T & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-      Sami H & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-      Varun R & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+      Alec F & 20 & 17.5 & 20 & 57.5 & -2.5\\
+      Dhruv G & 20 & 17.5 & 20 & 57.5 & -2.5\\
+      Glen T & 20 & 17.5 & 20 & 57.5 & -2.5\\
+      Sami H & 20 & 30 & 20 & 70 & 10\\
+      Varun R & 20 & 17.5 & 20 & 57.5 & -2.5\\
       
       \hline
-      St Dev & 0 & 0 & 0 & 0 & 0 & 0 & 0
+      St Dev & 0 & 5.6 & 0 & 5.6 & 5.6
     \end{tabular}
   \end{center}
 \end{table}
@@ -149,69 +149,86 @@ Accountable together -- we are Purdue.''}
 % BEGIN YOUR ASSIGNMENT HERE:
 
 \newpage
+
 \section{Main Text}
+\subsection{Link to GitHub}
+\paragraph{Our group's GitHub repository can be found \href{https://github.com/sheathcote/IE332Project2}{here}.}
+
 \subsection{Introduction}
-\paragraph{As the world moves toward more reliance on AI and robotics, it is important that we understand how adversarial attacks can be used to fool machine learning tools, such as image classifiers. Understanding and being able to stop adversarial attacks could have a large impact on the future, especially in situations such as autonomous driving, where the consequences of classifying a stop sign incorrectly could be death (Hui, 2020).}
+\paragraph{As the world moves toward more reliance on AI and robotics, it is important that we understand how adversarial attacks can be used to fool machine learning tools, such as image classifiers. Understanding and being able to stop adversarial attacks could have a large impact on the future, especially in situations such as autonomous driving, where the consequences of classifying a stop sign incorrectly could be death (Hui, 2020). Our task was to observe a pre trained image classifier that could determine whether a given image is a dandelion or grass. After observing how the model works, we were to come up with 5 different machine learning or optimization algorithms to independently try and fool the classifier. Additionally, we were tasked with creating a weighted majority classifier that assigned weights to the different algorithms based on expected performance. Our resulting classifier should be able to fool the pre trained model while changing exactly P/100 pixels, where P is the total number of pixels in a specific image.}
 
 \subsection{Jacobian-based Saliency Map Attack (JSMA)}
+
 \paragraph{The Jacobian-based Saliency Map Attack is a greedy algorithm that changes one pixel at a time over many iterations until the modified picture can fool the image classifier model into mislabeling it. This algorithm takes in an image, a model used to classify the images, a target label, and a maximum number of changes. It then iteratively calls a JSMA function that uses a saliency map to decide what pixel to change next. A saliency map is created by computing the change in the logit score of the target label for each pixel. Then, the pixel with the largest change to the logit score is chosen and changed. This is repeated until the image is able to fool the image classifier or the maximum number of changes is reached. (Dahal, 2019)}
-\paragraph{This type of attack is a good fit for our project because we have a limited budget of pixels, so an algorithm that changes one pixel at a time would be easy to stop when it reaches the pixel budget. Furthermore, since this function takes in a maximum number of changes variable, we can easily modify this variable to be the chosen pixel budget. In adition to being easy to limit the number of changes made by this algorithm, since this algorithm focuses on changing pixels that have the largest effect on the logit score of the target label, the algorithm should still be somewhat effective when the pixel allowance is small.}
 
-\subsection{Fast Gradient Signed Method Attack}
-\paragraph{ 
-The FGSM algorithm begins by loading the necessary libraries, then loading the model using load_model_tf, and then a custom function called random is used to randomly change specific pixel values. 
-The main FGSM perturbation function is what is mainly used to make this algorithm attack work. Perturbation is another word for change which is a term used for the FGSM attack. 
-It takes four arguments: image, model, epsilon, and target_label. The image is the model's input, the model is the Brightspace model/classifier, epsilon is a scalar value created which controls the magnitude or level of the perturbation, and target_label is the desired output label for the attack. 
-The function then calculates the gradient (rate of change/derivative) of the loss with respect to the input image using the TensorFlow GradientTape (a tool used to calculate gradients for the inputted images). 
-Then, the perturbation is calculated by multiplying the signed gradient with the epsilon value and then putting that into the original images. 
-These original images are provided in the algorithm in two different sections: grass and dandelions. For each section, the images are loaded and then converted into arrays so that they are in the right format to be affected by the FGSM attack. 
-Then the perturbed (or changed) image is clipped so that the pixel values are in a valid range of 0 to 1 so that they can be properly processed. 
-Finally, the prediction created by the FGSM algorithm previously are made using the Brightspace model and the predictions results are printed or outputted. 
-Ultimately, the FGSM attack fools the model by introducing small perturbations (changes) to the input images, making the model misclassify them while keeping the changes imperceptible to humans. 
-For my FGSM attack, it fooled the model by having it classify both the grass and dandelion images as grass ([,2] was close to 1 while [,1] was 0 for all the images and [,2] refers to grass probability while [,1] refers to dandelion probability). 
+\paragraph{This type of attack is a good fit for our project because we have a limited budget of pixels, so an algorithm that changes one pixel at a time would be easy to stop when it reaches the pixel budget. Furthermore, since this function takes in a maximum number of changes variable, we can easily modify this variable to be the chosen pixel budget. In addition to being easy to limit the number of changes made by this algorithm, since this algorithm focuses on changing pixels that have the largest effect on the logit score of the target label, the algorithm should still be somewhat effective when the pixel allowance is small.}
 
-\subsection{PGD Attack}
-\paragraph{The Projected Gradient Descent attack is an optimization algorithm that uses white-box attacks in an attempt to perturb images enough so that they can fool an image 
-classifier. When researching different types of algorithms to try and work on to fool the pre trained classifier, there were 4 main types of adversarial attacks to consider: 
-poisoning, evasion, extraction, and interference. [1] The most simple, yet feasible option seemed to be an evasion attack because it involves the use of a pre trained model, 
-and it only modifies the input to the model, not the actual training data, unlike the other three options. When looking at the different types of evasion attacks, two stood out: 
-FGSM or Fast Gradient Signed Method and PGD or Projected Gradient Descent. Both involve using a gradient to perturb an image a predetermined amount to add noise and try to fool the classifier. 
-The most simple way of explaining how a gradient based adversarial atack works is that the algorithm computes the gradient of the model's output with respect to its input, and uses 
-it to determine how to perturb the input. FGSM computes the gradient of loss function, a measure of how well the algorithm is performing, with respect to the input and then adds 
-perturbation in the direction of the sign of the gradient. PGD applies FGSM iteratively to the input and projects the perturbed input onto the feasible set of inputs, for example 
-those within a specificed distance of the original input. [2] Since PGD is an interative process, it looks for the perturbation that makes the loss function maximized while 
-ensuring the perturbation is less than the specified input epsilon but that will be discusses in the appendicies.}
 
-\subsection{Deep Fool}
-\paragraph{Deep Fool is an algorithm with to machine learning models that are designed to cause the model to make incorrect predictions. One of the key advantages of Deep Fool is that it can quickly generate highly effective adversarial examples using a minor amount of confusion. This is because Deep Fool uses linear approximation on the decision boundary of the model, permitting it to find the smallest possible perturbations, causing the model to change its prediction. Additionally, Deep Fool is effective against a wide range of machine learning models, including both deep neural networks and more traditional models like support vector machines.
+\subsection{Fast Gradient Signed Method}
+\paragraph{ The FGSM algorithm begins by loading the necessary libraries, then loading the model using load\textunderscore model\textunderscore tf, and then a custom function called random is used to randomly change specific pixel values. The main FGSM perturbation function is what is mainly used to make this algorithm attack work. Perturbation is another word for change which is a term used for the FGSM attack. It takes four arguments: image, model, epsilon, and target\textunderscore label. The image is the model's input, the model is the Brightspace model/classifier, epsilon is a scalar value created which controls the magnitude or level of the perturbation, and target\textunderscore label is the desired output label for the attack  (Rosebrock 2021). The function then calculates the gradient (rate of change/derivative) of the loss with respect to the input image using the TensorFlow GradientTape (a tool used to calculate gradients for the inputted images) (Rosebrock 2021).
+\newline
+Then, the perturbation is calculated by multiplying the signed gradient with the epsilon value and then putting that into the original images. These original images are provided in the algorithm in two different sections: grass and dandelions. For each section, the images are loaded and then converted into arrays so that they are in the right format to be affected by the FGSM attack. Then, the perturbed (or changed) image is clipped so that the pixel values are in a valid range of 0 to 1 so that they can be properly processed. Finally, the prediction created by the FGSM algorithm previously are made using the Brightspace model and the predictions results are printed or outputted. Ultimately, the FGSM attack fools the model by introducing small perturbations (changes) to the input images, making the model misclassify them while keeping the changes imperceptible to humans. For my FGSM attack, it fooled the model by having it classify both the grass and dandelion images as grass. This is because [,2] was close to 1 while [,1] was 0 for all the images, and [,2] refers to grass probability while [,1] refers to dandelion probability.} 
 
-The algorithm works by computing the distance between a given input image and the decision boundary of the target model. At each iteration, the algorithm finds the direction in which the input can be most effectively perturbed to move it closer to the decision boundary, and then applies a small perturbation in that direction. The size of the perturbation is chosen to be as small as possible while still being enough to cause the model to change its prediction. This process is repeated until the input image is classified incorrectly by the model.
+\subsection{Projected Gradient Descent Attack (PGD)}
+\paragraph{The Projected Gradient Descent attack is an optimization algorithm that uses white-box attacks in an attempt to perturb images enough so that they can fool an image classifier. When researching different types of algorithms to try and work on to fool the pre-trained classifier, there were 4 main types of adversarial attacks to consider: poisoning, evasion, extraction, and interference. The most simple, yet feasible option seemed to be an evasion attack because it involves the use of a pre-trained model, and it only modifies the input to the model, not the actual training data, unlike the other three options (Korolov, 2022). When looking at the different types of evasion attacks, two stood out: FGSM or Fast Gradient Signed Method and PGD or Projected Gradient Descent. Both involve using a gradient to perturb an image a predetermined amount to add noise and try to fool the classifier. The most simple way of explaining how a gradient based adversarial attack works is that the algorithm computes the gradient of the model's output with respect to its input, and uses it to determine how to perturb the input. FGSM computes the gradient of loss function, a measure of how well the algorithm is performing, with respect to the input and then adds perturbation in the direction of the sign of the gradient. PGD applies FGSM iteratively to the input and projects the perturbed input onto the feasible set of inputs, for example those within a specified distance of the original input. Since PGD is an iterative process, it looks for the perturbation that makes the loss function maximized while ensuring the perturbation is less than the specified input epsilon but that will be discussed in the appendices (Knagg, 2019).}
 
-One of the reasons why Deep Fool is a good choice for generating adversarial examples is that it is relatively easy to implement. Because it uses a linear approximation of the decision boundary, it is often more efficient than other algorithms that rely on gradient information. This means that it can generate adversarial examples more quickly and with fewer computational resources. Finally, Deep Fool is able to generate highly effective adversarial examples that are often difficult for humans to distinguish from the original input. This makes it a powerful tool for testing the robustness of machine learning models and identifying potential vulnerabilities. Based on all this information we are using Deep Fool as it will be efficient in confusing the images.
 
 \subsection{Carlini-Wagner Attack}
-\paragraph{The Carlini-Wagner attack is a technique for generating adversarial examples in deep neural networks. The goal of the attack is to create small perturbations to an input sample that are practiclly unseen to the human eye but are able to fool the classifier into making incorrect predictions. The CW attack is an optimization-based method that iteratively adjusts the input sample to find the smallest possible perturbation that causes the target model to make an incorrect prediction. The optimization objective is formulated as a minimization problem, where the objective function seeks to minimize both the perturbation magnitude and the distance between the original input and the perturbed input. This is subject to a constraint that the perturbed input should be misclassified by the target model. The Carlini-Wagner attack begins by generating a random perturbation to the original input sample. It then uses an optimization algorithm to iteratively adjust the perturbation to minimize the objective function. At each iteration, the algorithm computes the gradient of the objective function with respect to the perturbation and updates the perturbation accordingly. The process continues until either the objective function is minimized to a desired level or a maximum number of iterations is reached(Sciforce, 2022).}
+
+\paragraph{The Carlini-Wagner attack is a technique for generating adversarial examples in deep neural networks. The goal of the attack is to create small perturbations to an input sample that are practically unseen to the human eye but are able to fool the classifier into making incorrect predictions. The CW attack is an optimization-based method that iteratively adjusts the input sample to find the smallest possible perturbation that causes the target model to make an incorrect prediction. The optimization objective is formulated as a minimization problem, where the objective function seeks to minimize both the perturbation magnitude and the distance between the original input and the perturbed input. This is subject to a constraint that the perturbed input should be misclassified by the target model.} 
+
+\paragraph{The Carlini-Wagner attack begins by generating a random perturbation to the original input sample. It then uses an optimization algorithm to iterate and adjust the perturbation to minimize the objective function. At each iteration, the algorithm computes the gradient of the objective function with respect to the perturbation and updates the perturbation accordingly. The process continues until either the objective function is minimized to a desired level or a maximum number of iterations is reached(Sciforce, 2022).}
+
+\subsection{Deep Fool}
+\paragraph{Deep Fool is an algorithm with to machine learning models that are designed to cause the model to make incorrect predictions. One of the key advantages of Deep Fool is that it can quickly generate highly effective adversarial examples using a minor amount of confusion. This is because Deep Fool uses linear approximation on the decision boundary of the model, permitting it to find the smallest possible perturbations, causing the model to change its prediction. Additionally, Deep Fool is effective against a wide range of machine learning models, including both deep neural networks and more traditional models like support vector machines.}
+
+\paragraph{The algorithm works by computing the distance between a given input image and the decision boundary of the target model. At each iteration, the algorithm finds the direction in which the input can be most effectively perturbed to move it closer to the decision boundary, and then applies a small perturbation in that direction. The size of the perturbation is chosen to be as small as possible while still being enough to cause the model to change its prediction. This process is repeated until the input image is classified incorrectly by the model.}
+
+\paragraph{One of the reasons why Deep Fool is a good choice for generating adversarial examples is that it is relatively easy to implement. Because it uses a linear approximation of the decision boundary, it is often more efficient than other algorithms that rely on gradient information. This means that it can generate adversarial examples more quickly and with fewer computational resources. Finally, Deep Fool is able to generate highly effective adversarial examples that are often difficult for humans to distinguish from the original input. This makes it a powerful tool for testing the robustness of machine learning models and identifying potential vulnerabilities. Based on all this information we are using Deep Fool as it will be efficient in confusing the images.}
 
 \subsection{Main Algorithm}
 \paragraph{The main algorithm is a majority voting classifier that combines our five optimization algorithms. The main algorithm takes in an image and the pixel budget which for us is 1 percent or P/100 pixels where P is the total number of pixels in the image. Then, it calls each of the sub algorithms on the given image. With the modified images from each of sub algorithms, we create a matrix that displays 1 for the pixels that are different from the original image and 0 for the pixels that remain the same. Then, we weight the sub algorithms such that the total weights add up to 1. These weights are then multiplied with the matrices of each sub algorithm and summed to get one big matrix that represents the image. Finally, the pixels with the highest value from the weighted matrix will be chosen until the pixel budget is reached. This new modified image is then returned to the user. This final modified image will then be saved to a new folder in the working directory, and then tested against the pre-trained image classifier.}
 
-\subsection{Other Algorithms Discussion}
+\subsection{Other Algorithms Considered But Not Used}
+
 \subsubsection{Spatial Transformation Attack}
 \paragraph{The Spatial Transformation Attack that I attempted utilized affine transformations on the input images as opposed to the gradient-based changes of the FGSM. Then like the FGSM, it normalized the images to an appropriate pixel range (0 to 1 for pixel values as opposed to 0 to 255 for integers). Ultimately after a lot of editing and debugging, I got the attack to give an output but it wasn't in the format I wanted. While the attack's output did show the time taken for each image, it wouldn't show the probability rating for grass and dandelions for each image. I tried to hardcode some of the output syntax but that only made the end result messier. Ultimately, I decided that FGSM attack was simpler and more effective than this attack.}
+
 \subsubsection{One Pixel Attack}
-\paragraph{ The One Pixel Attack that I attempted as the name suggests change one pixel in the image to fool the model/classifier. Ultimately, I found this attack inefficient and unreliable, taking on significantly more runtime (250 milliseconds per image) all while giving messier output. Once I found out about FGSM and its use of an episilon based equation, I decided to stop using the One Pixel Attack}
+\paragraph{ The One Pixel Attack that I attempted as the name suggests change one pixel in the image to fool the model/classifier. Ultimately, I found this attack inefficient and unreliable, taking on significantly more runtime (250 milliseconds per image) all while giving messier output. Also as I continued to edit it, it started giving me errors and not producing the previous output. Therefore once I found out about FGSM and its use of an episilon based equation, I decided to stop using the One Pixel Attack}
 
-\subsubsection{Random Dots and Boxes}
-\paragraph{When I was having trouble implementing more complex algorithms, I created a couple of basic functions to place random yellow pixels and yellow boxes in the middle of a grass image and white pixels and boxes in dandelion images. Surprisingly, the dandelion images were fairly easy to fool with random white dots, but the grass images became even more sure they were grass with the yellow pixels and yellow boxes. Ultimately, I decided to stick with trying to implement a JSMA function because the random boxes were unable to fool the grass images at all.}
+\subsection{Using the Main Algorithm with Simple Functions}
 
+\paragraph{After much time spent working on implementing the algorithms we have discussed above, we decided to try a few simple algorithms to see if we could get a working main algorithm. These simple functions do things like putting a yellow box in the middle of the image, changing green pixels to be yellow, and making a white box in the middle of the image. They can be found in the file titled "FiveRandomFunctions.R". Although these functions do not trick the image classifier very well, they were useful in debugging our main algorithm and having something functional to turn in. In the 10-15 times I tested the main algorithm (as seen in the MainAlgorithm.R file), the main algorithm running with the five random functions was able to trick the image classifier consistently on one dandelion image. This is not a very good outcome, but seeing as these functions were made mostly for debugging purposes, it was surprising to use that these functions tricked the model for a single image.}
 
-}
+\paragraph{In order to run our main algorithm, you will need to download the FiveRandomFunctions.R and MainAlgorithm.R functions. You should then set the working directory to wherever you have the model and image folders saved. Then, you can run the five functions from the FiveRandomFunctions.R file. With these five algorithms loaded, you can then run the MainAlgorithm.R file to test the main algorithm with the grass and dandelion images. If any of the modified images are able to fool the model, the percentage confidence for that image will be printed to the screen.}
 
 \subsection{Conclusion}
 
-\section{Appendix}
+\paragraph{Over the course of completing this project, we learned a lot about the various adversarial attack algorithms, in addition to improving our coding and debugging capabilities. Although we were unable to implement the five sub-algorithms we hoped to use, we learned about these algorithms through our research and attempts at implementation. Ultimately, we have a working main algorithm, and although it does not utilize the sub-algorithms we were hoping to use, it has been able to fool the image classifier on some images.}
 
+\newpage
+
+\section{Appendix}
 \subsection{Testing/Correctness/Verification}
+\subsubsection{FGSM Debugging}
+
+\textbf{Issue 1:} Incompatibility between the perturbation function and the input image. The perturbation function calculates the gradients for the input image with respect to the model's loss. These gradients sometimes produced perturbations that, when added to the original image, result in pixel values outside the valid range of [0, 1] thus creating an error. Clipping the perturbed image values to this valid range ensured compatibility with the input format expected by the model.
+\newline
+\textbf{Solution:} I used the k\textunderscore clip function from the keras package to clip the pixel values of the perturbed image to the range [0, 1] after adding the perturbations.
+\newline
+\textbf{Issue 2:} Reshaping arrays in the perturbation function. The input image needed to be reshaped into a 4-dimensional array with a batch dimension (1, height, width, channels) to be compatible with the model's input. The target\textunderscore label also needed to be reshaped to match the model's output dimensions. I kept getting errors regarding incompatibility between the FGSM perturbation function and the input images' format.
+\newline
+\textbf{Solution:} Therefore, I ended up using the array\textunderscore reshape function from the keras library to reshape the input image and target\textunderscore label to the appropriate dimensions.
+\newline
+\textbf{Issue 3:} The error non-numeric argument to binary operator appears when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255) is what happened.
+\newline
+\textbf{Solution:} To solve the issue, I ended up using the image\textunderscore to\textunderscore array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.
+
+
+\subsubsection{FGSM Epsilon Scaling}
+\paragraph{For the FGSM attack as mentioned before, the epsilon value is of utmost importance in whether the attack fools the modifier as well as if its changes are perceptible to the human eye. Therefore, I spent time changing the epsilon value and finding its sweet spot that fools the classifier with regards to classifying the dandelion images as grass while keeping the changes imperceptible to the human eye. I started with 0.05 and found it wasn't fooling the modifier. Then, I chose 0.80 which did fool the modifier but whose changes were too obvious. After this, I kept scaling down the value until I reached 0.20 which mostly fooled the modifier except for a couple images. Ultimately, I found that the epsilon value of 0.30 was the sweet spot so to speak that fooled the modifier while keeping the changes as subtle as possible from a human perspective.}
+
 
 \subsubsection{JSMA Debugging}
 In my attempt to implement a JSMA algorithm, I ran into a lot of problems with the tensorflow library.
@@ -224,8 +241,27 @@ In my attempt to implement a JSMA algorithm, I ran into a lot of problems with t
 \newline
 \textbf{Solution:} I was unable to find a solution to this problem. I tried reshaping the image to be of shape (1, 224, 224, 3) using the array\textunderscore reshape function as demonstrated in the Brightspace code. However, this gave me a new error stating that "index 1 of dimension 0 is out of bounds". I was unable to find a way to reshape the array to have the first dimension be of length "None", as all my searches for aid online brought up Python code.
 
+\subsubsection{PGD Debugging}
+\textbf{Issue 1:} Using the gradient attribute from the Tensorflow library. Initially, in my PGD attack function, I had the gradient attribute trying to calculate the gradient of the loss function of the input. I kept getting an error saying that the gradient attribute couldn't be found in the Tensorflow library.
+\newline
+\textbf{Solution:} I used GradientTape instead. GradientTape is a part of the Tensorflow package that allows the user to record operations. I thought this would solve the problem, but I realized that I had already used GradientTape at the beginning of the for loop for the image x\_adv. This allowed me to understand that GradientTape must be used in conjunction with gradient to get accurate results. I would go on to change this in the next section.
+\newline
+\textbf{Issue 2:} Using GradientTape led to another problem. When I ran the PGD attack using GradientTape to calculate the gradient of each image, it would be calculated and stored as a non-numeric value. This would cause an error on the next line of the function where I was trying to find the signs of each gradient. The function sign() wouldn't accept a non-numerical value, therefore, I had to change something.
+\newline
+\textbf{Solution:} Instead of changing the sign() function, I went back to the GradientTape function. Instead of calling is as tf\$GradientTape(loss, x\_adv), I reverted back to using gradient. To solve the problem of the argument being non-numeric, I saved the line "with(tf\$GradientTape(persistent=TRUE)" as tape, and then calculated the gradients by using tape\$gradient(loss, x\_adv). The reason that calling gradient on tape works instead of the Tensorflow module (tf) is because tf does have access to the records that GradientTape is keeping track of. Once I saved the GradientTape line to an object, gradient can access the operations and calculate the gradients with respect to the loss of each tensor.
+\newline
+\textbf{Issue 3:} Cannot reshape array of size because the image dimensions aren't being read correctly. Every time I try and run the PGD attack on the unmodified grass or dandelions folder, I get an error saying that it cannot reshape an array of size 150528 into the shape of (1, ).
+\newline
+\textbf{Solution:} I have tried so many ways to debug this error. I tried running each image seperately through the PGD attack, rather than the whole library of images. I changed the code to include a function that would get the dimensions of the image when it was run through the function, but that also didn't work. This is currently the part that is not allowing the algorithm to work properly. 
+
+\subsubsection{Carlini-Wagner Debugging}
+\paragraph{I had several issues working with this algorithm and was never able to quite get it to work like I thought it would. I had trouble loading the model and getting the function that I used to work with it. In the end this mainly was due to not having the correct library installed into my R studio workspace. Once this was installed my next issue was getting the parameters of the function to work. This seemed to be the largest hold up in my debugging process that I was never able to get through. I am unsure if my paramaters for my CW function were incorrect as I tried to alter a few of them and had no success with that solution as well. I feel that my inabbility to get it to work is due to shortcomings with my personal coding abilities. On paper the algorithm should work but implementing it into R was a lot harder than I thought it would be.}  
+
+\subsubsection{Deep Fool Debugging}
+\paragraph{For deep fool there was one error:  could not find function ``mx.nd.array". I figured out that I did not have the appropriate library downloaded for it to find the function. Once I installed the package opencv then the code overall was functioning except that I am not able to see the result. If the algorithm were to work then we would be able to see whether or not we fooled the compiler and it was still the same to the naked eye. Right now I have a set epsilon value of .3 as this worked on one of our other algorithms.}
+
 \subsubsection{Main Algorithm Decisions and Potential Challenges}
-Since we were unable to get all of our sub-algorithms functioning, we did not get to debug the main algorithm. However, we have listed below a few problems we expect would have been challenging in addition to a few challenges we faced in designing the main algorithm.
+Since we were unable to get all of our sub-algorithms functioning, the main algorithm was only able to be debugged with some simple functions. Therefore, we have listed below a few problems we expect would have been challenging in addition to a few challenges we faced in designing the main algorithm.
 \newline
 \textbf{Issue 1:} The various sub functions return images in different formats, so converting them all to be matrices with values in the same range (0 - 1) instead of (1-255) could have been challenging.
 \newline
@@ -237,30 +273,30 @@ Since we were unable to get all of our sub-algorithms functioning, we did not ge
 \newline
 \textbf{Issue 3:} After we find what pixels to change using the weighted majority classifier, we needed to decide how to change the pixel, since each sub-algorithm changes it in a different way.
 \newline
-\textbf{Solution:} We chose to change the main image to reflect the changes made in the sub-algorithm who's weighted value for that pixel is highest. This will ensure that the pixel does get changed, as any algorithms that didn't change the pixel will have a weighted value of zero. Furthermore, the sub-algorithm that was weighted as most important will be the one to change the pixel. 
+\textbf{Solution:} We chose to change the main image to reflect the changes made in the sub-algorithm who's weighted value for that pixel is highest. This will ensure that the pixel does get changed, as any algorithms that didn't change the pixel will have a weighted value of zero. Furthermore, the sub-algorithm that was weighted as most important will be the one to change the pixel.
 
 
 \subsection{Runtime Complexity and Walltime}
+\subsubsection{FGSM Runtime}
+\paragraph{The FGSM attack spend roughly 100 milliseconds per image and iterated through all the images in around 5 seconds. This is incredibly fast and effective all while taking less power than many other alternatives such as the Projected Gradient Method (PGD).}
 
+\subsubsection{JSMA Runtime}
+\paragraph{Since JSMA calculates the saliency map after each pixel is changed, this algorithm would likely be slower at running than the other sub-algorithms, such as FGSM.}
+
+\subsubsection{PGD Runtime}
+\paragraph{The Projected Gradient Descent attack is similar in operation to the FGSM attack as mentioned before. FGSM computes the gradient of the loss function with respect to the input and uses epsilon to scale the amount of perturbation. PGD builds on this technique by using an iterative optimization. It calculates the gradients as the function loops through the image and takes steps in the direction of the signs, making it iterative. At the same time it projects the calculated perturbation onto the input. This clearly demands more computing power than the FGSM as the computation and momdification is being done is small steps, 1 at a time. This allows for more advanced adversarial attacks, potentially fooling the classifier at a higher rate. Due to this facts, the algorithm would take longer to run and may not complete the tasks in the desired time, a trade off of modification quality.}
+
+\subsection{Carlini-Wagner Runtime}
+\paragrapgh{The computational power needed for the Carlini-Wagner attack algorithm can vary depending on factors such as the complexity of the classifier that is being attacked, the number of input images, and the desired level of perturbation. However generally speaking, the Carlini-Wagner attack is computationally expensive, especially when compared to the other adversarial attack methods like FGSM, and PGD. This is simply because it involves solving an optimization problem to find the minimum perturbation needed to fool the model, which can require a large number of iterations. This also needs to be done for each individual image meaning a larger input image set will require much more computational power let alone a longer run time. In this specific case, this very nature of the algorithm would be a down side to using it for these purposes.}
+
+\subsubsection{Deep Fool Runtime}
+\paragraph{DeepFool is generally very fast compared to other algorithms. It is commonly reported to take less than a second to generate an image, even for high resolution. The exact runtime may depend on implementation as well as the complexity of the image classifier.
 
 \subsection{Algorithm Justification}
-\subsection{Reasons to Choose FGSM}
-\paragraph
-{1. FGSM is a one-step method that generates adversarial examples by linearizing the loss function and maximizing it using the gradient sign. This basically means it operates from just one formula, making it both simpler and faster than alternatives (Deepfool, One Pixel, etc.) }
+\subsubsection{FGSM}
+1. FGSM is a one-step method that generates adversarial examples by linearizing the loss function and maximizing it using the gradient sign. This basically means it operates from just one formula, making it both simpler and faster than alternatives (Deepfool, One Pixel, etc.)
 \newline
-\paragraph{2. Everything about the magnitude and scale of the perturbations is through a simple epsilon scalar value, contributing to the aforementioned simplicity compared to the other options.
-\subsubsection{FGSM Debugging}
-\paragraph{Issue I faced: Incompatibility between the perturbation function and the input image. The perturbation function calculates the gradients for the input image with respect to the model's loss. These gradients sometimes produced perturbations that, when added to the original image, result in pixel values outside the valid range of [0, 1] thus creating an error. Clipping the perturbed image values to this valid range ensured compatibility with the input format expected by the model.}
-
-\paragraph{Solution I chose: I used the k_clip function from the keras package to clip the pixel values of the perturbed image to the range [0, 1] after adding the perturbations.}
-
-\paragraph{ Issue I faced: Reshaping arrays in the perturbation function. The input image needed to be reshaped into a 4-dimensional array with a batch dimension (1, height, width, channels) to be compatible with the model's input. The target_label also needed to be reshaped to match the model's output dimensions. I kept getting errors regarding incompatibility between the fgsm perturbation function and the input images' format. }
-
-\paragraph{Solution I chose: Therefore, I ended up using the array_reshape function from the keras library to reshape the input image and target_label to the appropriate dimensions.}
-
-\paragraph{Issue I faced: The error "non-numeric argument to binary operator" when trying to divide the image array by 255. Basically format incompatibility regarding dividing an image (non-numeric) by a numeric operator (255).} 
-
-\paragraph{Solution I chose: To solve the issue, I ended up using the image_to_array function so that the input image turned array could be divided by 255. Dividing by 255 is necessary since it normalizes the pixel values to a 0 to 1 range which is much easier for the model to process as opposed to 1 to 255 integers.}
+2. Everything about the magnitude and scale of the perturbations is through a simple epsilon scalar value, contributing to the aforementioned simplicity compared to the other options.
 
 \subsubsection{JSMA}
 JSMA is a good fit for dealing with the pixel budget.
@@ -269,20 +305,55 @@ JSMA is a good fit for dealing with the pixel budget.
 \newline
 2. Since the algorithm changes one pixel at a time and takes in an epoch value that is the maximum number of changes, it is easy to implement the pixel budget by changing the epoch value.
 
-\subsubsection{Deep Fool Debugging}
-\paragraph{For deep fool there was one error:  could not find function "mx.nd.array". I figured out that I did not have the appropriate library downloaded for it to find the function. Once I installed the package opencv then the code overall was functioning except that I am not able to see the result. If the algorithm were to work then we would be able to see whether or not we fooled the compiler and it was still the same to the naked eye. Right now I have a set epsilon value of .3 as this worked on one of our other algorithms.  
+\subsubsection{PGD}
+1. PGD is a multi-step algorithm that generates adversarial images by calculating the gradient with respect to the loss of the input in a iterative fashion and then projecting the perturbation back onto the image. Since the PGD attack can be run on an image multiple times, this allows for a stronger adversarial image that has a higher chance to fool the classifier than simpler algorithms (FGSM, DeepFool, etc.)
+\newline
+2. The value of epsilon in a PGD attack, one of the required inputs, is used to determine the maximum amount of perturbation on each pixel of the image. By scaling the epsilon to be larger, the attack is allowed to perturb the image more, leading to a stronger adversarial example. Since the project guidelines state that the image only has to fool the classifier, and doesn't have to look the same to the human eye, we can use higher epsilon values to our advantage and change the image to a higher degree. Increasing the epsilon values allows for higher potential to fool the classifier, which is a reason we chose PGD attacks. 
+
+\subsubsection{Carlini-Wagner}
+1. The Carlini-Wagner attack can be customized to target specific types of classifications. For example, it can be configured to target a particular class or to maximize the confidence score of the incorrect prediction (Zhang, and Li, 2019).
+\newline
+2. Since the attack runs through many iterations and relies on a well trained model it allows the attack to to give a higher confidence score as well as has a higher chance at fooling the classifier.
+
+
+\subsubsection{Deep Fool}
+Deep Fool is a very good algorithm for fooling an image classifier in a very short amount of time.
+\newline 
+1. Deep Fool is very effective in generating adversarial examples to successfully fool classifiers. One of the main advantages is the ability to produce perturbations with a minimum amount of pixel changes which makes it particularly useful in cases where strict constraints are involved. 
+\newline
+2. Even with a wide variety of image classifiers, deep fool is extremely fast, especially compared to some other algorithms. Thanks to the fact that it is an iterative algorithm, this allows it to quickly converge on optimal perturbations that will fool a classifier. 
+\newline 
+3. Deep Fool can also run effectively on modern GPUs, allowing it to also work efficiently in large-scale operations. Combining its effectiveness and efficiency, this seemed like a very good algorithm to choose for fooling the image classifier in this project. 
+
+
+
+\newpage
 
 \section{References}
+Korolov, Maria. "Adversarial Machine Learning Explained: How Attackers Disrupt AI and ML Systems." CSO Online, 28 June 2022, www.csoonline.com/article/3664748/adversarial-machine-learning-explained-how-attackers-disrupt-ai-and-ml-systems.html. Accessed 27 Apr. 2023.
+\bigskip
 
-\paragraph{Dahal, P. (2019, July 30). Adversarial attacks - breaking and defending neural networks. DeepNotes. Retrieved April 27, 2023, from https://deepnotes.io/adversarial-attack}
+\noindent
+Knagg, Oscar. “Know Your Enemy - towards Data Science.” Medium, Towards Data Science, 6 Jan. 2019, towardsdatascience.com/know-your-enemy-7f7c5038bdf3. Accessed 27 Apr. 2023.
+\bigskip
 
-\paragraph{Hui, J. (2020, July 22). Adversarial attacks. Medium. Retrieved April 27, 2023, from https://jonathan-hui.medium.com/adversarial-attacks-b58318bb497b#:~:text=Jacobian%2Dbased%20Saliency%20Map%20Attack%20(JSMA)&amp;text=This%20is%20a%20greedy%20algorithm,label)%20for%20a%20saliency%20map.}
+\noindent
+Dahal, P. (2019, July 30). Adversarial attacks - breaking and defending neural networks. DeepNotes. Retrieved April 27, 2023, from https://deepnotes.io/adversarial-attack
+\bigskip
 
-\paragraph{[1] Korolov, Maria. “Adversarial Machine Learning Explained: How Attackers Disrupt AI and ML Systems.” CSO Online, 28 June 2022, www.csoonline.com/article/3664748/adversarial-machine-learning-explained-how-attackers-disrupt-ai-and-ml-systems.html#:~:text=Types%20of%20adversarial%20machine%20learning,evasion%2C%20extraction%2C%20and%20inference. Accessed 27 Apr. 2023.}
+\noindent
+Hui, J. (2020, July 22). Adversarial attacks. Medium. Retrieved April 27, 2023, from https://jonathan-hui.medium.com/adversarial-attacks-b58318bb497b.
+\bigskip
 
-\paragraph{Sciforce. (2022, September 7). Adversarial attacks explained (and how to defend ML models against them). Medium. Retrieved April 28, 2023, from https://medium.com/sciforce/adversarial-attacks-explained-and-how-to-defend-ml-models-against-them-d76f7d013b18.}
+\noindent
+Rosebrock, A. (2021, April 17). Adversarial attacks with FGSM (fast gradient sign method). PyImageSearch. Retrieved April 27, 2023, from https://pyimagesearch.com/2021/03/01/adversarial-attacks-with-fgsm-fast-gradient-sign-method/
+\bigskip
 
-\paragraph{[2] Knagg, Oscar. “Know Your Enemy - towards Data Science.” Medium, Towards Data Science, 6 Jan. 2019, towardsdatascience.com/know-your-enemy-7f7c5038bdf3. Accessed 27 Apr. 2023.}
+\noindent
+Sciforce. (2022, September 7). Adversarial attacks explained (and how to defend ML models against them). Medium. Retrieved April 28, 2023, from https://medium.com/sciforce/adversarial-attacks-explained-and-how-to-defend-ml-models-against-them-d76f7d013b18.
+\bigskip
 
-‌
+\noindent
+Zhang, J., and Li, C. (2019, September 23). Adversarial Examples: Opportunities and Challenges. Retrieved April 28, 2023, from https://arxiv.org/pdf/1809.04790.pdf 
+\bigskip
 \end{document}
