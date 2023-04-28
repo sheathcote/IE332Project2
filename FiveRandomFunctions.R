@@ -1,6 +1,7 @@
 #function that makes modifies images
 #image is the image to be changed
 #P is the percent of pixels I get to change
+#white box function
 random1 <- function (x, P) {
   x_size <- length(x[,1,1])
   y_size <- length(x[1,,1])
@@ -20,6 +21,7 @@ random1 <- function (x, P) {
   return(x)
 }
 
+#green at top of image function
 random2 <- function (x, P) {
   x_size <- length(x[,1,1])
   y_size <- length(x[1,,1])
@@ -38,6 +40,7 @@ random2 <- function (x, P) {
   return(x)
 }
 
+
 random3 <- function (x, P) {
   x_size <- length(x[,1,1])
   y_size <- length(x[1,,1])
@@ -45,7 +48,7 @@ random3 <- function (x, P) {
   count <- 0
   for (i in 1:x_size) {
     for (j in 1:y_size) {
-      if ((count < P) && (i > 50) && (j > 50)) {  #condition for what pixels you want to change
+      if ((count < P) && ((((j-1) * x_size) + i) %% 10 == 0)) {  #condition for what pixels you want to change
         #RGB values should be 0 to 1
         x[i,j,1] <- 0 #modifies red value
         x[i,j,2] <- 0 #modifies green value

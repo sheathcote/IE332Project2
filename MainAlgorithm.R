@@ -152,6 +152,7 @@ for (i in f){
   img <- array_reshape(img, c(1, dim(img)))
   pred <- model %>% predict(img)
   if (pred[1,2] < 0.5) {
+    print(i)
     print(pred)
   }
   #x <- array_reshape(x, c(1, dim(x)))
@@ -177,6 +178,7 @@ for (i in f){
   img <- array_reshape(img, c(1, dim(img)))
   pred <- model %>% predict(img)
   if (pred[1,1] < 0.5) {
+    print(i)
     print(pred)
   }
 }
